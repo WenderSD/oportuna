@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum PapelUsuario {
+  USUARIO
+  ADMINISTRADOR
+}
+
+enum ModalidadeTrabalho {
+  PRESENCIAL
+  HIBRIDO
+  REMOTO
+}
+
+model Usuario {
+  id             String        @id @default(uuid())
+  nome           String
+  email          String        @unique
+  senhaHash      String
+  papel          PapelUsuario  @default(USUARIO)
+  criadoEm       DateTime      @default(now())
+  atualizadoEm   DateTime      @updatedAt
+
+  oportunidades Oportunidade[]
+}
+
+model Oportunidade {
+  id                String             @id @default(uuid())
+  titulo            String
+  descricao         String
+  empresa           String
+  localizacao       String?
+  modalidade        ModalidadeTrabalho @default(PRESENCIAL)
+  linkCandidatura   String?
+  criadoEm          DateTime           @default(now())
+  atualizadoEm     DateTime           @updatedAt
+
+  autorId String
+  autor   Usuario @relation(fields: [autorId], references: [id], onDelete: Restrict)
+
+  @@index([criadoEm])
+  @@index([autorId])
+}
+
