@@ -1,0 +1,111 @@
+/* ==============================
+   1. Variáveis globais
+================================= */
+
+:root {
+  /* Cores da marca */
+  --color-primary: #6d4aff;
+  --color-primary-hover: #5637d5;
+  --color-secondary: #3978f6;
+  --color-primary-light: #eee9ff;
+
+  /* Cores de fundo */
+  --color-background: #f7f8fc;
+  --color-surface: #ffffff;
+
+  /* Cores de texto */
+  --color-text-primary: #20243a;
+  --color-text-secondary: #747a91;
+
+  /* Bordas */
+  --color-border: #e6e8f0;
+
+  /* Feedback */
+  --color-success: #1fa971;
+  --color-warning: #e8a23a;
+  --color-error: #d94c65;
+
+  /* Espaçamentos */
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-2xl: 48px;
+
+  /* Bordas arredondadas */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+  --radius-xl: 24px;
+  --radius-full: 999px;
+
+  /* Tipografia */
+  --font-primary: "Poppins", sans-serif;
+}
+
+/* ==============================
+   2. Reset CSS
+================================= */
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ==============================
+   3. Configurações gerais
+================================= */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-background);
+  color: var(--color-text-primary);
+  font-size: 14px;
+  line-height: 1.5;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
+/* ==============================
+   4. Elementos padrão
+================================= */
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img {
+  display: block;
+  max-width: 100%;
+}
+
+/* ==============================
+   5. Container padrão
+================================= */
+
+#root {
+  min-height: 100vh;
+}
