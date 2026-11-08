@@ -1,0 +1,39 @@
+### Login correto (deve dar 200 com o token)
+POST http://localhost:3000/api/usuarios/login
+Content-Type: application/json
+
+{
+  "email": "giovane@exemplo.com",
+  "senha": "senha12345"
+}
+
+### Senha errada (deve dar 401)
+POST http://localhost:3000/api/usuarios/login
+Content-Type: application/json
+
+{
+  "email": "giovane@exemplo.com",
+  "senha": "errada123"
+}
+
+### E-mail que não existe (deve dar 401, com a MESMA mensagem)
+POST http://localhost:3000/api/usuarios/login
+Content-Type: application/json
+
+{
+  "email": "naoexiste@exemplo.com",
+  "senha": "senha12345"
+}
+
+@token = COLE_O_TOKEN_AQUI
+
+### Perfil com token (deve dar 200)
+GET http://localhost:3000/api/usuarios/me
+Authorization: Bearer {{token}}
+
+### Sem token (deve dar 401)
+GET http://localhost:3000/api/usuarios/me
+
+### Token inválido (deve dar 401)
+GET http://localhost:3000/api/usuarios/me
+Authorization: Bearer abc
