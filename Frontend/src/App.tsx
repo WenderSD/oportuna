@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "./components/Navbar/Navbar";
 import { OpportunityCard } from "./components/OpportunityCard/OpportunityCard";
+import { Home } from "./pages/Home/Home";
 
 function TestPage({ title }: { title: string }) {
   return (
@@ -34,7 +35,7 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/home" element={<TestPage title="Início" />} />
+        <Route path="/home" element={<Home />} />
 
         <Route
           path="/publicar"
