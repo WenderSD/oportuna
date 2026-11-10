@@ -23,3 +23,15 @@ export const cadastroUsuarioSchema = z.object({
 });
 
 export type CadastroUsuarioInput = z.infer<typeof cadastroUsuarioSchema>;
+
+export const loginUsuarioSchema = z.object({
+  email: z
+    .string()
+    .trim()
+    .email("Informe um e-mail válido.")
+    .transform((email) => email.toLowerCase()),
+
+  senha: z.string().min(1, "Informe a senha."),
+});
+
+export type LoginUsuarioInput = z.infer<typeof loginUsuarioSchema>;
