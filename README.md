@@ -25,9 +25,9 @@ Plataforma desenvolvida para centralizar oportunidades de emprego, estágio e ex
 
 ```text
 oportuna/
-├── frontend/
+├── Frontend/
 │   └── src/
-├── backend/
+├── Backend/
 │   ├── prisma/
 │   │   ├── migrations/
 │   │   └── schema.prisma
@@ -46,29 +46,30 @@ oportuna/
 1. Acesse a pasta:
 
 ```bash
-cd backend
+cd Backend
 ```
 
 2. Instale as dependências:
 
 ```bash
-npm install
+npm ci
 ```
 
 3. Crie um arquivo `.env` com base no `.env.example`.
 
 4. Configure a conexão com o PostgreSQL.
 
-5. Gere o Prisma Client:
+5. Valide o schema e gere o Prisma Client:
 
 ```bash
-npx prisma generate
+npm run prisma:validate
+npm run prisma:generate
 ```
 
 6. Execute as migrations:
 
 ```bash
-npx prisma migrate deploy
+npx prisma migrate deploy --config prisma7.config.ts
 ```
 
 7. Inicie o servidor em desenvolvimento:
@@ -77,12 +78,31 @@ npx prisma migrate deploy
 npm run dev
 ```
 
+Os comandos `dev`, `typecheck` e `build` geram o Prisma Client automaticamente.
+O diretório `generated/prisma` não deve ser versionado.
+
+### Verificação e execução compilada
+
+```bash
+npm run typecheck
+npm run build
+npm start
+```
+
+O build inclui os fontes da API e o cliente Prisma gerado em `dist`.
+O comando `start` executa `dist/src/server.js` com Node.js, sem depender de `tsx`.
+A variável `DATABASE_URL` deve estar definida para iniciar a API.
+
+Com o servidor iniciado, `GET http://localhost:3000/api/health` verifica a API.
+`GET http://localhost:3000/api/health/db` verifica também a conexão com o PostgreSQL.
+A validação do schema, a geração do cliente e a compilação não aplicam migrations.
+
 ## Configuração do Frontend
 
 1. Acesse a pasta:
 
 ```bash
-cd frontend
+cd Frontend
 ```
 
 2. Instale as dependências:

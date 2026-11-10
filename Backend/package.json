@@ -4,10 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "predev": "npm run prisma:generate",
     "dev": "tsx watch src/server.ts",
+    "prebuild": "npm run prisma:generate",
     "build": "tsc",
-    "start": "node dist/server.js",
-    "typecheck": "tsc --noEmit"
+    "start": "node dist/src/server.js",
+    "pretypecheck": "npm run prisma:generate",
+    "typecheck": "tsc --noEmit",
+    "prisma:generate": "prisma generate --config prisma7.config.ts",
+    "prisma:validate": "prisma validate --config prisma7.config.ts"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
