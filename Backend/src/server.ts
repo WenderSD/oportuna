@@ -24,11 +24,6 @@ app.get("/api/health", (_req, res) => {
 
 app.use("/api/usuarios", usuarioRouter);
 
-app.post("/api/oportunidade", (_req, _res) => {
-  let request = _req.body;
-  alert(request.text);
-});
-
 app.get("/api/health/db", async (_req, res) => {
   try {
     await prisma.$queryRaw`SELECT 1`;
