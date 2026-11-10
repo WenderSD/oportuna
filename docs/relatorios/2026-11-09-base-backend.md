@@ -1,6 +1,7 @@
 # Base de compilação e execução do backend
 
-Data: 09/11/2026  
+Data: 09/11/2026
+
 Responsável: Pedro Henrique — [drexsi0](https://github.com/drexsi0)
 
 ## Objetivo
