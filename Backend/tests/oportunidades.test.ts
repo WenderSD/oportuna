@@ -527,6 +527,9 @@ test("executor recusa banco remoto, schema alternativo ou nome sem sufixo de tes
     "postgresql://p:p@127.0.0.1/oportuna_db",
     "postgresql://p:p@127.0.0.1/oportuna_test?schema=outro",
     "http://127.0.0.1/oportuna_test",
+    "postgresql://p:p@127.0.0.1/oportuna_test?host=database.example",
+    "postgresql://p:p@127.0.0.1/oportuna_test?options=-csearch_path=outro",
+    "postgresql://p:p@127.0.0.1/oportuna_test?schema=public&schema=public",
   ]) {
     const resultado = spawnSync(process.execPath, ["scripts/test.mjs"], {
       env: { ...process.env, TEST_DATABASE_URL: url },
@@ -534,5 +537,19 @@ test("executor recusa banco remoto, schema alternativo ou nome sem sufixo de tes
     });
     assert.equal(resultado.status, 1);
     assert.match(resultado.stderr, /banco de testes deve ser local/);
+  }
+});
+
+test("seed recusa banco de testes e parâmetros que substituem o host", () => {
+  for (const url of [
+    "postgresql://p:p@127.0.0.1/oportuna_db?host=database.example",
+    process.env.TEST_DATABASE_URL!,
+  ]) {
+    const resultado = spawnSync(process.execPath, ["--import", "tsx", "prisma/seed.ts"], {
+      env: { ...process.env, DATABASE_URL: url, ALLOW_DEMO_SEED: "true" },
+      encoding: "utf8",
+    });
+    assert.equal(resultado.status, 1);
+    assert.match(resultado.stderr, /use um banco local/);
   }
 });

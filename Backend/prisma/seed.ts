@@ -7,7 +7,12 @@ async function main() {
   if (
     process.env.ALLOW_DEMO_SEED !== "true" ||
     process.env.NODE_ENV === "production" ||
-    !["localhost", "127.0.0.1", "[::1]"].includes(url.hostname)
+    !["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) ||
+    url.pathname.endsWith("_test") ||
+    [...url.searchParams.keys()].some((chave) => chave !== "schema") ||
+    url.searchParams.getAll("schema").length > 1 ||
+    (url.searchParams.has("schema") && url.searchParams.get("schema") !== "public") ||
+    url.hash !== ""
   ) {
     throw new Error(
       "Para criar dados fictícios, use um banco local e defina ALLOW_DEMO_SEED=true.",

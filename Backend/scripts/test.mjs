@@ -11,7 +11,10 @@ if (
   !["postgresql:", "postgres:"].includes(url.protocol) ||
   !["localhost", "127.0.0.1", "[::1]", "postgres"].includes(url.hostname) ||
   !/^\/[a-zA-Z0-9_]+_test$/.test(url.pathname) ||
-  (url.searchParams.has("schema") && url.searchParams.get("schema") !== "public")
+  [...url.searchParams.keys()].some((chave) => chave !== "schema") ||
+  url.searchParams.getAll("schema").length > 1 ||
+  (url.searchParams.has("schema") && url.searchParams.get("schema") !== "public") ||
+  url.hash !== ""
 ) {
   throw new Error(
     "O banco de testes deve ser local, ter nome terminado em _test e usar o schema public.",
