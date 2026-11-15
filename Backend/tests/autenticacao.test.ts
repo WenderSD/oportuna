@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { randomUUID } from "node:crypto";
 import { once } from "node:events";
+import type { Server } from "node:http";
 import { after, before, test } from "node:test";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -11,7 +12,7 @@ assert.equal(process.env.NODE_ENV, "test");
 assert.equal(process.env.DATABASE_URL, process.env.TEST_DATABASE_URL);
 assert.match(new URL(process.env.DATABASE_URL!).pathname, /_test$/);
 
-const servidor = app.listen(0, "127.0.0.1");
+let servidor: Server;
 const emails: string[] = [];
 let base: string;
 type Resposta = {
@@ -40,6 +41,7 @@ function conta() {
 }
 
 before(async () => {
+  servidor = app.listen(0, "127.0.0.1");
   await once(servidor, "listening");
   const endereco = servidor.address();
   assert.ok(endereco && typeof endereco === "object");
