@@ -1,0 +1,59 @@
+name: Backend
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: backend-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validar:
+    name: Qualidade e integração PostgreSQL
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: Backend
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: senha-ficticia-ci
+          POSTGRES_DB: oportuna_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U postgres -d oportuna_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      TEST_DATABASE_URL: postgresql://postgres:senha-ficticia-ci@127.0.0.1:5432/oportuna_test?schema=public
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: Backend/package-lock.json
+      - name: Instalar dependências
+        run: npm ci
+      - name: Validar schema
+        run: npm run prisma:validate
+      - name: Verificar código e formatação
+        run: npm run lint
+      - name: Verificar tipos
+        run: npm run typecheck
+      - name: Compilar
+        run: npm run build
+      - name: Testar API com PostgreSQL
+        run: npm test

@@ -10,11 +10,18 @@
     "build": "tsc",
     "start": "node dist/src/server.js",
     "pretypecheck": "npm run prisma:generate",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -p tsconfig.check.json",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
     "prisma:generate": "prisma generate --config prisma7.config.ts",
-    "prisma:validate": "prisma validate --config prisma7.config.ts"
+    "prisma:validate": "prisma validate --config prisma7.config.ts",
+    "db:migrate": "prisma migrate deploy --config prisma7.config.ts",
+    "db:seed": "tsx prisma/seed.ts",
+    "pretest": "npm run prisma:generate",
+    "test": "node scripts/test.mjs"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.6.8",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/jsonwebtoken": "^9.0.10",

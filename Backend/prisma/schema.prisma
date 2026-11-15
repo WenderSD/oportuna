@@ -18,6 +18,13 @@ enum ModalidadeTrabalho {
   REMOTO
 }
 
+enum TipoOportunidade {
+  EMPREGO
+  ESTAGIO
+  PESQUISA
+  OUTRO
+}
+
 model Usuario {
   id             String        @id @default(uuid())
   nome           String
@@ -37,7 +44,12 @@ model Oportunidade {
   empresa           String
   localizacao       String?
   modalidade        ModalidadeTrabalho @default(PRESENCIAL)
+  tipo              TipoOportunidade   @default(OUTRO)
+  requisitos        String[]           @default([])
   linkCandidatura   String?
+  emailContato      String?
+  expiraEm          DateTime?
+  encerradaEm       DateTime?
   criadoEm          DateTime           @default(now())
   atualizadoEm     DateTime           @updatedAt
 

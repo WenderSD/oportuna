@@ -1,0 +1,60 @@
+@baseUrl = http://localhost:3000/api
+@token = COLE_O_TOKEN_DO_LOGIN
+@oportunidadeId = COLE_O_ID_DA_PUBLICACAO
+
+### Login com a conta fictícia criada pelo seed
+POST {{baseUrl}}/usuarios/login
+Content-Type: application/json
+
+{
+  "email": "demo@example.test",
+  "senha": "Demo-oportuna-123"
+}
+
+### Perfil para identificar o autor no frontend
+GET {{baseUrl}}/usuarios/me
+Authorization: Bearer {{token}}
+
+### Publicar
+POST {{baseUrl}}/oportunidades
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Estágio em desenvolvimento",
+  "empresa": "Empresa Exemplo",
+  "descricao": "Desenvolvimento de aplicações para a comunidade acadêmica.",
+  "tipo": "ESTAGIO",
+  "modalidade": "REMOTO",
+  "requisitos": ["Estar cursando ensino superior"],
+  "linkCandidatura": "https://example.com/candidatura"
+}
+
+### Filtrar
+GET {{baseUrl}}/oportunidades?tipo=ESTAGIO&modalidade=REMOTO&pagina=1&limite=10
+Authorization: Bearer {{token}}
+
+### Detalhes
+GET {{baseUrl}}/oportunidades/{{oportunidadeId}}
+Authorization: Bearer {{token}}
+
+### Minhas publicações, incluindo histórico
+GET {{baseUrl}}/usuarios/me/oportunidades
+Authorization: Bearer {{token}}
+
+### Minhas publicações encerradas
+GET {{baseUrl}}/usuarios/me/oportunidades?estado=ENCERRADA
+Authorization: Bearer {{token}}
+
+### Editar como autor
+PATCH {{baseUrl}}/oportunidades/{{oportunidadeId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "titulo": "Estágio em desenvolvimento web"
+}
+
+### Encerrar como autor
+PATCH {{baseUrl}}/oportunidades/{{oportunidadeId}}/encerrar
+Authorization: Bearer {{token}}
