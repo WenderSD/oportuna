@@ -1,0 +1,8 @@
+CREATE TYPE "TipoOportunidade" AS ENUM ('EMPREGO', 'ESTAGIO', 'PESQUISA', 'OUTRO');
+
+ALTER TABLE "Oportunidade"
+ADD COLUMN "tipo" "TipoOportunidade" NOT NULL DEFAULT 'OUTRO',
+ADD COLUMN "requisitos" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+ADD COLUMN "emailContato" TEXT,
+ADD COLUMN "expiraEm" TIMESTAMP(3),
+ADD COLUMN "encerradaEm" TIMESTAMP(3);

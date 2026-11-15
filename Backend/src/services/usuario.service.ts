@@ -1,11 +1,8 @@
-import { AppError } from "../lib/AppError.js";
 import bcrypt from "bcryptjs";
-import { prisma } from "../lib/prisma.js";
+import { AppError } from "../lib/AppError.js";
 import { gerarToken } from "../lib/jwt.js";
-import type {
-  CadastroUsuarioInput,
-  LoginUsuarioInput,
-} from "../schemas/usuario.schema.js";
+import { prisma } from "../lib/prisma.js";
+import type { CadastroUsuarioInput, LoginUsuarioInput } from "../schemas/usuario.schema.js";
 
 export class UsuarioService {
   async cadastrar(dados: CadastroUsuarioInput) {
@@ -47,9 +44,7 @@ export class UsuarioService {
       where: { email: dados.email },
     });
 
-    const senhaConfere = usuario
-      ? await bcrypt.compare(dados.senha, usuario.senhaHash)
-      : false;
+    const senhaConfere = usuario ? await bcrypt.compare(dados.senha, usuario.senhaHash) : false;
 
     // Mesma mensagem para e-mail inexistente e senha errada (não revela qual falhou)
     if (!usuario || !senhaConfere) {

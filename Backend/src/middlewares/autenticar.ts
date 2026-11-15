@@ -5,7 +5,7 @@ import { verificarToken } from "../lib/jwt.js";
 export const autenticar: RequestHandler = (req, _res, next) => {
   const cabecalho = req.headers.authorization;
 
-  if (!cabecalho || !cabecalho.startsWith("Bearer ")) {
+  if (!cabecalho?.startsWith("Bearer ")) {
     throw new AppError("Token não informado.", 401);
   }
 
