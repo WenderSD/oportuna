@@ -94,7 +94,10 @@ npm start
 
 O build inclui os fontes da API e o cliente Prisma gerado em `dist`.
 O comando `start` executa `dist/src/server.js` com Node.js, sem depender de `tsx`.
-A variável `DATABASE_URL` deve estar definida para iniciar a API.
+Antes de abrir a porta, a API valida `DATABASE_URL` (URL PostgreSQL), `JWT_SECRET` (não vazio),
+`JWT_EXPIRES_IN` (duração positiva, padrão `1d`) e `PORT` (inteiro de 1 a 65535, padrão 3000).
+Use uma chave JWT própria no ambiente local. Configuração inválida interrompe a inicialização
+com uma mensagem sobre a variável, sem exibir sua senha ou chave.
 
 Com o servidor iniciado, `GET http://localhost:3000/api/health` verifica a API.
 `GET http://localhost:3000/api/health/db` verifica também a conexão com o PostgreSQL.
@@ -153,6 +156,8 @@ npm test
 `typecheck` inclui os testes e o seed. `build` compila somente a API e seu cliente Prisma.
 A suíte verifica publicação, filtros fechados, paginação, detalhes, autoria, edição, encerramento,
 expiração, autenticação, validação e preservação de dados antigos pela migration.
+Também cobre normalização de cadastro/login, armazenamento de hash, conflitos de email
+inclusive simultâneos, credenciais incorretas e configuração inválida de inicialização.
 
 O workflow [Backend](.github/workflows/backend.yml) executa as verificações em PRs para main,
 em atualizações da main e por acionamento manual. Cada execução usa um PostgreSQL temporário,

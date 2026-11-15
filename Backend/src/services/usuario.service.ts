@@ -1,4 +1,5 @@
 import bcrypt from "bcryptjs";
+import { Prisma } from "../../generated/prisma/client.js";
 import { AppError } from "../lib/AppError.js";
 import { gerarToken } from "../lib/jwt.js";
 import { prisma } from "../lib/prisma.js";
@@ -6,37 +7,29 @@ import type { CadastroUsuarioInput, LoginUsuarioInput } from "../schemas/usuario
 
 export class UsuarioService {
   async cadastrar(dados: CadastroUsuarioInput) {
-    // 1. Verificar se o e-mail já está cadastrado
-    const usuarioExistente = await prisma.usuario.findUnique({
-      where: {
-        email: dados.email,
-      },
-    });
-
-    if (usuarioExistente) {
-      throw new AppError("Este e-mail já está cadastrado.", 409);
-    }
-
-    // 2. Gerar hash da senha
     const senhaHash = await bcrypt.hash(dados.senha, 12);
 
-    // 3. Criar usuário no banco
-    const usuario = await prisma.usuario.create({
-      data: {
-        nome: dados.nome,
-        email: dados.email,
-        senhaHash,
-      },
-      select: {
-        id: true,
-        nome: true,
-        email: true,
-        papel: true,
-        criadoEm: true,
-      },
-    });
-
-    return usuario;
+    try {
+      return await prisma.usuario.create({
+        data: {
+          nome: dados.nome,
+          email: dados.email,
+          senhaHash,
+        },
+        select: {
+          id: true,
+          nome: true,
+          email: true,
+          papel: true,
+          criadoEm: true,
+        },
+      });
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+        throw new AppError("Este e-mail já está cadastrado.", 409);
+      }
+      throw error;
+    }
   }
 
   async login(dados: LoginUsuarioInput) {
