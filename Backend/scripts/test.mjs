@@ -42,4 +42,12 @@ executar([
   "--config",
   "prisma7.config.ts",
 ]);
-executar(["--import", "tsx", "--test", "--test-concurrency=1", "tests/oportunidades.test.ts"]);
+executar([
+  "--import",
+  "tsx",
+  "--test",
+  "--test-concurrency=1",
+  "tests/ambiente.test.ts",
+  "tests/autenticacao.test.ts",
+  "tests/oportunidades.test.ts",
+]);

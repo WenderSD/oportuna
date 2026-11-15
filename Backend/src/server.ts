@@ -1,7 +1,8 @@
-import { app } from "./app.js";
+import { validarAmbiente } from "./lib/ambiente.js";
 
-const PORT = Number(process.env.PORT ?? 3000);
+const { porta } = validarAmbiente();
+const { app } = await import("./app.js");
 
-app.listen(PORT, () => {
-  console.log(`OportUna API executando em http://localhost:${PORT}`);
+app.listen(porta, () => {
+  console.log(`OportUna API executando em http://localhost:${porta}`);
 });
