@@ -543,6 +543,7 @@ test("executor recusa banco remoto, schema alternativo ou nome sem sufixo de tes
 test("seed recusa banco de testes e parâmetros que substituem o host", () => {
   for (const url of [
     "postgresql://p:p@127.0.0.1/oportuna_db?host=database.example",
+    "postgresql://p:p@127.0.0.1/oportuna_%74est",
     process.env.TEST_DATABASE_URL!,
   ]) {
     const resultado = spawnSync(process.execPath, ["--import", "tsx", "prisma/seed.ts"], {

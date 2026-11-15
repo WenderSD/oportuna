@@ -7,8 +7,9 @@ async function main() {
   if (
     process.env.ALLOW_DEMO_SEED !== "true" ||
     process.env.NODE_ENV === "production" ||
+    !["postgresql:", "postgres:"].includes(url.protocol) ||
     !["localhost", "127.0.0.1", "[::1]"].includes(url.hostname) ||
-    url.pathname.endsWith("_test") ||
+    decodeURIComponent(url.pathname).endsWith("_test") ||
     [...url.searchParams.keys()].some((chave) => chave !== "schema") ||
     url.searchParams.getAll("schema").length > 1 ||
     (url.searchParams.has("schema") && url.searchParams.get("schema") !== "public") ||
