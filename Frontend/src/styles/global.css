@@ -4,18 +4,23 @@
 
 :root {
   /* Cores da marca */
-  --color-primary: #6d4aff;
-  --color-primary-hover: #5637d5;
+  --color-primary: #02aaa6;
+  --color-primary-hover: #008f8c;
+  --color-primary-light: #e6f7f6;
+
   --color-secondary: #3978f6;
-  --color-primary-light: #eee9ff;
+  --color-navy: #01163b;
+  --color-teal: #02aaa6;
 
   /* Cores de fundo */
   --color-background: #f7f8fc;
   --color-surface: #ffffff;
+  --color-surface-secondary: #e6f7f6;
 
   /* Cores de texto */
   --color-text-primary: #20243a;
   --color-text-secondary: #747a91;
+  --color-text-light: #ffffff;
 
   /* Bordas */
   --color-border: #e6e8f0;

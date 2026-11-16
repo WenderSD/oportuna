@@ -1,5 +1,6 @@
 import { NavLink } from "react-router-dom";
 import { House, PlusCircle, UserRound } from "lucide-react";
+import logoNavbar from "../../assets/images/logo-oportuna-navbar.png";
 import styles from "./Navbar.module.css";
 
 const navigationItems = [
@@ -25,7 +26,7 @@ export function Navbar() {
     <header className={styles.header}>
       <div className={styles.container}>
         <NavLink to="/home" className={styles.logo}>
-          <span>OportUna</span>
+          <img src={logoNavbar} alt="OportUna" />
         </NavLink>
 
         <nav className={styles.navigation}>

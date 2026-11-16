@@ -1,12 +1,25 @@
 import type { InputHTMLAttributes } from "react";
 import styles from "./Input.module.css";
 
-interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
+interface InputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, "id"> {
+  id: string;
   label: string;
   error?: string;
 }
 
-export function Input({ label, error, id, ...props }: InputProps) {
+export function Input({
+  label,
+  error,
+  id,
+  className,
+  "aria-describedby": ariaDescribedBy,
+  ...props
+}: InputProps) {
+  const describedBy =
+    [ariaDescribedBy, error ? `${id}-error` : undefined]
+      .filter(Boolean)
+      .join(" ") || undefined;
+
   return (
     <div className={styles.container}>
       <label htmlFor={id} className={styles.label}>
@@ -15,9 +28,11 @@ export function Input({ label, error, id, ...props }: InputProps) {
 
       <input
         id={id}
-        className={`${styles.input} ${error ? styles.inputError : ""}`}
+        className={`${styles.input} ${
+          error ? styles.inputError : ""
+        } ${className ?? ""}`}
         aria-invalid={Boolean(error)}
-        aria-describedby={error ? `${id}-error` : undefined}
+        aria-describedby={describedBy}
         {...props}
       />
 

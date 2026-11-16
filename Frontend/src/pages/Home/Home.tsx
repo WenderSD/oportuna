@@ -1,13 +1,14 @@
-import { Navbar } from "../../components/Navbar/Navbar";
+import { useNavigate } from "react-router-dom";
 import { OpportunityCard } from "../../components/OpportunityCard/OpportunityCard";
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
 import styles from "./Home.module.css";
 
 export function Home() {
+  const navigate = useNavigate();
+
   return (
     <main className={styles.home}>
-      <Navbar />
       <div className={styles.container}>
         <section className={styles.welcome}>
           <h1>Olá! Que oportunidade você procura?</h1>
@@ -30,6 +31,7 @@ export function Home() {
           <div className={styles.sectionHeader}>
             <h2>Oportunidades em destaque</h2>
           </div>
+
           <div className={styles.opportunityList}>
             <OpportunityCard
               titulo="Estágio em Desenvolvimento de Software"
@@ -37,7 +39,7 @@ export function Home() {
               tipo="Estágio"
               modalidade="Híbrido"
               descricao="Oportunidade para estudantes de tecnologia interessados em desenvolvimento de aplicações web."
-              onVerDetalhes={() => alert("Abrir detalhes da oportunidade")}
+              onVerDetalhes={() => navigate("/oportunidade/1")}
             />
           </div>
         </section>
