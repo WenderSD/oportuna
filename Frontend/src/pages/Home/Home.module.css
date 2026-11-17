@@ -1,3 +1,4 @@
+
 .home {
   min-height: calc(100vh - 76px);
   background-color: var(--color-background);
@@ -36,6 +37,13 @@
 }
 
 /* Pesquisa */
+.searchContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
 .searchSection {
   display: flex;
   align-items: flex-end;
@@ -50,6 +58,58 @@
 
 .searchButton {
   flex-shrink: 0;
+  min-width: 130px;
+}
+
+/* Sugestões de pesquisa */
+.suggestions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.suggestionsLabel {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.suggestionList {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.suggestion {
+  padding: 8px 16px;
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-size: 12px;
+  font-weight: 500;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+  cursor: pointer;
+}
+
+.suggestion:hover {
+  background-color: #d3f0ee;
+  border-color: var(--color-primary);
+}
+
+.suggestionActive {
+  color: var(--color-text-light);
+  background-color: var(--color-primary);
+}
+
+.suggestionActive:hover {
+  color: var(--color-text-light);
+  background-color: var(--color-primary-hover);
 }
 
 /* Oportunidades */
@@ -78,6 +138,16 @@
   gap: 16px;
 }
 
+.emptyMessage {
+  padding: 32px 24px;
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  text-align: center;
+}
+
 /* Responsividade */
 @media (max-width: 768px) {
   .container {
@@ -98,6 +168,16 @@
     width: 100%;
   }
 
+  .suggestions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .suggestionList {
+    gap: 8px;
+  }
+
   .sectionHeader h2 {
     font-size: 19px;
   }
@@ -114,5 +194,10 @@
 
   .welcome p {
     font-size: 14px;
+  }
+
+  .suggestion {
+    padding: 7px 12px;
+    font-size: 11px;
   }
 }
