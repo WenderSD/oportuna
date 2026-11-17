@@ -185,7 +185,11 @@
   color: #128a4a;
 }
 
-.statusAnalise,
+.statusAnalise {
+  background-color: #fdf0c4;
+  color: #8a5a00;
+}
+
 .statusEncerrada {
   background-color: #eceef2;
   color: #5b6475;
@@ -225,6 +229,12 @@
 .empty {
   margin: 0;
   color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.error {
+  margin: 0;
+  color: var(--perfil-danger);
   font-size: 14px;
 }
 

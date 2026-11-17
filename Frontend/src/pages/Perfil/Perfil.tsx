@@ -1,42 +1,19 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "./Perfil.module.css";
-
-type StatusOportunidade = "ativa" | "analise" | "encerrada";
-
-interface Oportunidade {
-  id: number;
-  titulo: string;
-  empresa: string;
-  status: StatusOportunidade;
-}
+import type {
+  Oportunidade,
+  StatusOportunidade,
+} from "../../types/oportunidade";
+import {
+  excluirOportunidade,
+  listarMinhasOportunidades,
+} from "../../services/oportunidadeService";
 
 const estudante = {
   nome: "Nome do estudante",
   email: "estudante@exemplo.com",
   tipoConta: "Conta de estudante",
 };
-
-// Dados de exemplo. Depois é só trocar por dados vindos do Backend.
-const oportunidadesIniciais: Oportunidade[] = [
-  {
-    id: 1,
-    titulo: "Estágio em Desenvolvimento de Software",
-    empresa: "Empresa de tecnologia",
-    status: "ativa",
-  },
-  {
-    id: 2,
-    titulo: "Jovem Aprendiz Administrativo",
-    empresa: "Organização parceira",
-    status: "analise",
-  },
-  {
-    id: 3,
-    titulo: "Suporte Técnico — Estágio",
-    empresa: "Empresa de serviços",
-    status: "encerrada",
-  },
-];
 
 const statusLabel: Record<StatusOportunidade, string> = {
   ativa: "Ativa",
@@ -51,14 +28,42 @@ const statusClass: Record<StatusOportunidade, string> = {
 };
 
 export function Perfil() {
-  const [oportunidades, setOportunidades] = useState(oportunidadesIniciais);
+  const [oportunidades, setOportunidades] = useState<Oportunidade[]>([]);
+  const [carregando, setCarregando] = useState(true);
+  const [erro, setErro] = useState<string | null>(null);
 
-  function handleEditar(id: number) {
+  useEffect(() => {
+    let ativo = true;
+
+    listarMinhasOportunidades()
+      .then((dados) => {
+        if (ativo) setOportunidades(dados);
+      })
+      .catch((e: Error) => {
+        if (ativo) setErro(e.message);
+      })
+      .finally(() => {
+        if (ativo) setCarregando(false);
+      });
+
+    return () => {
+      ativo = false;
+    };
+  }, []);
+
+  function handleEditar(id: string) {
     alert(`Editar oportunidade ${id}`);
   }
 
-  function handleExcluir(id: number) {
-    setOportunidades((atual) => atual.filter((item) => item.id !== id));
+  async function handleExcluir(id: string) {
+    if (!window.confirm("Deseja excluir esta oportunidade?")) return;
+
+    try {
+      await excluirOportunidade(id);
+      setOportunidades((atual) => atual.filter((item) => item.id !== id));
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Não foi possível excluir.");
+    }
   }
 
   return (
@@ -88,41 +93,52 @@ export function Perfil() {
             <p>Publicações realizadas por você.</p>
           </div>
 
-          <ul className={styles.opportunityList}>
-            {oportunidades.map((item) => (
-              <li key={item.id} className={styles.opportunityItem}>
-                <div className={styles.opportunityInfo}>
-                  <strong>{item.titulo}</strong>
-                  <span>{item.empresa}</span>
-                </div>
+          {carregando && <p className={styles.empty}>Carregando...</p>}
 
-                <span className={`${styles.status} ${statusClass[item.status]}`}>
-                  {statusLabel[item.status]}
-                </span>
+          {erro && <p className={styles.error}>{erro}</p>}
 
-                <div className={styles.actions}>
-                  <button
-                    type="button"
-                    className={styles.editButton}
-                    onClick={() => handleEditar(item.id)}
-                  >
-                    Editar
-                  </button>
-                  <button
-                    type="button"
-                    className={styles.deleteButton}
-                    onClick={() => handleExcluir(item.id)}
-                  >
-                    Excluir
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-
-          {oportunidades.length === 0 && (
-            <p className={styles.empty}>Você ainda não publicou oportunidades.</p>
+          {!carregando && !erro && oportunidades.length === 0 && (
+            <p className={styles.empty}>
+              Você ainda não publicou oportunidades.
+            </p>
           )}
+
+          <ul className={styles.opportunityList}>
+            {oportunidades.map((item) => {
+              // Enquanto o banco não tiver status, consideramos "ativa".
+              const status = item.status ?? "ativa";
+
+              return (
+                <li key={item.id} className={styles.opportunityItem}>
+                  <div className={styles.opportunityInfo}>
+                    <strong>{item.titulo}</strong>
+                    <span>{item.empresa}</span>
+                  </div>
+
+                  <span className={`${styles.status} ${statusClass[status]}`}>
+                    {statusLabel[status]}
+                  </span>
+
+                  <div className={styles.actions}>
+                    <button
+                      type="button"
+                      className={styles.editButton}
+                      onClick={() => handleEditar(item.id)}
+                    >
+                      Editar
+                    </button>
+                    <button
+                      type="button"
+                      className={styles.deleteButton}
+                      onClick={() => handleExcluir(item.id)}
+                    >
+                      Excluir
+                    </button>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
         </section>
       </div>
     </div>
