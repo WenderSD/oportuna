@@ -4,15 +4,7 @@ import { MainLayout } from "../layouts/MainLayout/MainLayout";
 import { Login } from "../pages/Login/Login";
 import { Home } from "../pages/Home/Home";
 import { OpportunityDetails } from "../pages/OpportunityDetails/OpportunityDetails";
-
-function TestPage({ title }: { title: string }) {
-  return (
-    <main style={{ padding: "40px 64px" }}>
-      <h1>{title}</h1>
-      <p>Teste de navegação do OportUna.</p>
-    </main>
-  );
-}
+import { Perfil } from "../pages/Perfil/Perfil";
 
 export function AppRoutes() {
   return (
@@ -24,7 +16,7 @@ export function AppRoutes() {
       <Route element={<MainLayout />}>
         <Route path="/home" element={<Home />} />
         <Route path="/publicar" element={<PublishOpportunity />} />
-        <Route path="/perfil" element={<TestPage title="Meu perfil" />} />
+        <Route path="/perfil" element={<Perfil />} />
       </Route>
 
       {/* Detalhes: sem Navbar */}

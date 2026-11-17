@@ -1,0 +1,277 @@
+.perfil {
+  --perfil-surface: #ffffff;
+  --perfil-border: #e8edf3;
+  --perfil-accent: #0fa8a0;
+  --perfil-accent-soft: #dff3f1;
+  --perfil-danger: #e11d48;
+
+  background-color: var(--color-background);
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* Cabeçalho */
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.titleUnderline {
+  text-decoration: underline;
+  text-decoration-color: var(--perfil-accent);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 6px;
+}
+
+.header p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Card do estudante */
+.profileCard {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 28px 32px;
+  background-color: var(--perfil-surface);
+  border: 1px solid var(--perfil-border);
+  border-radius: 20px;
+  box-shadow: 0 2px 10px rgba(20, 30, 60, 0.04);
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--perfil-accent-soft);
+  color: var(--perfil-accent);
+  font-size: 34px;
+  font-weight: 700;
+}
+
+.profileInfo {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  min-width: 0;
+}
+
+.profileInfo h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.email {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.badge {
+  margin-top: 4px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background-color: var(--perfil-accent-soft);
+  color: var(--perfil-accent);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Minhas oportunidades */
+.opportunities {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.sectionHeader h2 {
+  margin: 0;
+  color: var(--color-text-primary);
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.sectionHeader p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+.opportunityList {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.opportunityItem {
+  display: grid;
+  grid-template-columns: 1fr 140px auto;
+  align-items: center;
+  gap: 24px;
+  padding: 20px 28px;
+  background-color: var(--perfil-surface);
+  border: 1px solid var(--perfil-border);
+  border-radius: 16px;
+  box-shadow: 0 2px 10px rgba(20, 30, 60, 0.04);
+}
+
+.opportunityInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+.opportunityInfo strong {
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.opportunityInfo span {
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+/* Status */
+.status {
+  justify-self: center;
+  min-width: 96px;
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.statusAtiva {
+  background-color: #d7f5e3;
+  color: #128a4a;
+}
+
+.statusAnalise,
+.statusEncerrada {
+  background-color: #eceef2;
+  color: #5b6475;
+}
+
+/* Ações */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+}
+
+.editButton,
+.deleteButton {
+  padding: 4px 0;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.editButton {
+  color: var(--perfil-accent);
+}
+
+.deleteButton {
+  color: var(--perfil-danger);
+}
+
+.editButton:hover,
+.deleteButton:hover {
+  text-decoration: underline;
+}
+
+.empty {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .container {
+    padding: 32px 20px;
+    gap: 28px;
+  }
+
+  .header h1 {
+    font-size: 24px;
+  }
+
+  .profileCard {
+    padding: 22px 20px;
+    gap: 18px;
+  }
+
+  .opportunityItem {
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    padding: 18px 20px;
+  }
+
+  .actions {
+    grid-column: 1 / -1;
+    justify-content: flex-end;
+  }
+
+  .sectionHeader h2 {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 24px 16px;
+  }
+
+  .header h1 {
+    font-size: 21px;
+  }
+
+  .avatar {
+    width: 64px;
+    height: 64px;
+    font-size: 28px;
+  }
+}
