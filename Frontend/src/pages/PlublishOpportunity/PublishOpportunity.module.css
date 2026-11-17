@@ -1,0 +1,209 @@
+
+.page {
+  width: 100%;
+  min-height: 100%;
+  padding: 34px 24px 48px;
+  background-color: var(--color-background);
+}
+
+.container {
+  width: 100%;
+  max-width: 1240px;
+  margin: 0 auto;
+}
+
+/* Cabeçalho */
+.header h1 {
+  color: var(--color-navy);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.header p {
+  margin-top: 8px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* Conteúdo principal */
+.content {
+  display: grid;
+  grid-template-columns: minmax(0, 900px) 310px;
+  align-items: start;
+  gap: 30px;
+  margin-top: 40px;
+}
+
+/* Formulário */
+.formCard {
+  min-height: 555px;
+  padding: 28px 35px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* Campos */
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field label {
+  color: var(--color-text-primary);
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.select,
+.textarea {
+  width: 100%;
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  font-family: var(--font-primary);
+  font-size: 13px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.select {
+  height: 50px;
+  padding: 0 15px;
+  color: var(--color-text-secondary);
+}
+
+.select:valid {
+  color: var(--color-text-primary);
+}
+
+.textarea {
+  min-height: 123px;
+  padding: 12px 15px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.select:focus,
+.textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 3px rgba(2, 170, 166, 0.12);
+}
+
+.select::placeholder,
+.textarea::placeholder {
+  color: var(--color-text-secondary);
+}
+
+/* Ações */
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 26px;
+  margin-top: 0;
+}
+
+.submitButton {
+  width: 220px;
+  min-height: 42px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+}
+
+.cancelButton {
+  padding: 8px 0;
+  color: var(--color-text-secondary);
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.cancelButton:hover {
+  color: var(--color-primary);
+}
+
+/* Dica lateral */
+.tipCard {
+  padding: 24px 28px;
+  background-color: rgba(2, 170, 166, 0.15);
+  border-radius: 16px;
+}
+
+.tipCard h2 {
+  margin-bottom: 12px;
+  color: var(--color-navy);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.tipCard p {
+  color: var(--color-text-primary);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+/* Responsividade */
+@media (max-width: 1000px) {
+  .content {
+    grid-template-columns: minmax(0, 1fr) 260px;
+    gap: 20px;
+  }
+
+  .formCard {
+    padding: 28px;
+  }
+}
+
+@media (max-width: 760px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+
+  .tipCard {
+    order: -1;
+  }
+
+  .formCard {
+    min-height: auto;
+  }
+}
+
+@media (max-width: 480px) {
+  .page {
+    padding: 28px 16px 36px;
+  }
+
+  .header h1 {
+    font-size: 23px;
+  }
+
+  .formCard {
+    padding: 22px 18px;
+  }
+
+  .actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+  }
+
+  .submitButton {
+    width: 100%;
+  }
+
+  .cancelButton {
+    align-self: center;
+  }
+}

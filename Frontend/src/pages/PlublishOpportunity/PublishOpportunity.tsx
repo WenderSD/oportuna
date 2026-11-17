@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
 
-import styles from "./PlublishOpportunity.module.css";
+import styles from "./PublishOpportunity.module.css";
 
 export function PublishOpportunity() {
   const navigate = useNavigate();
