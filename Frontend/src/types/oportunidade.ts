@@ -1,23 +1,48 @@
 export type Modalidade = "PRESENCIAL" | "HIBRIDO" | "REMOTO";
-export type StatusOportunidade = "ativa" | "analise" | "encerrada";
+export type TipoOportunidade = "EMPREGO" | "ESTAGIO" | "PESQUISA" | "OUTRO";
+export type EstadoOportunidade = "ATIVA" | "EXPIRADA" | "ENCERRADA";
 
 export interface Oportunidade {
   id: string;
   titulo: string;
   descricao: string;
   empresa: string;
-  localizacao?: string | null;
+  localizacao: string | null;
   modalidade: Modalidade;
-  linkCandidatura?: string | null;
+  tipo: TipoOportunidade;
+  requisitos: string[];
+  linkCandidatura: string | null;
+  emailContato: string | null;
+  expiraEm: string | null;
+  encerradaEm: string | null;
   criadoEm: string;
+  atualizadoEm: string;
+  autorId: string;
+  estado: EstadoOportunidade;
+}
 
-  // Ainda não existem no banco. O front trata como opcionais.
-  status?: StatusOportunidade;
-  tipo?: string;
+export interface Paginacao {
+  pagina: number;
+  limite: number;
+  total: number;
+  totalPaginas: number;
 }
 
 export const modalidadeLabel: Record<Modalidade, string> = {
   PRESENCIAL: "Presencial",
   HIBRIDO: "Híbrido",
   REMOTO: "Remoto",
+};
+
+export const tipoLabel: Record<TipoOportunidade, string> = {
+  EMPREGO: "Emprego",
+  ESTAGIO: "Estágio",
+  PESQUISA: "Pesquisa",
+  OUTRO: "Outro",
+};
+
+export const estadoLabel: Record<EstadoOportunidade, string> = {
+  ATIVA: "Ativa",
+  EXPIRADA: "Expirada",
+  ENCERRADA: "Encerrada",
 };

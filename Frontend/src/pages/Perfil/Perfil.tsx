@@ -1,33 +1,28 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import styles from "./Perfil.module.css";
-import type {
-  Oportunidade,
-  StatusOportunidade,
-} from "../../types/oportunidade";
+import { ApiError } from "../../services/api";
+import { buscarPerfil, sair } from "../../services/authService";
+import type { Usuario } from "../../services/authService";
 import {
-  excluirOportunidade,
+  encerrarOportunidade,
   listarMinhasOportunidades,
 } from "../../services/oportunidadeService";
+import { estadoLabel } from "../../types/oportunidade";
+import type {
+  EstadoOportunidade,
+  Oportunidade,
+} from "../../types/oportunidade";
 
-const estudante = {
-  nome: "Nome do estudante",
-  email: "estudante@exemplo.com",
-  tipoConta: "Conta de estudante",
-};
-
-const statusLabel: Record<StatusOportunidade, string> = {
-  ativa: "Ativa",
-  analise: "Em análise",
-  encerrada: "Encerrada",
-};
-
-const statusClass: Record<StatusOportunidade, string> = {
-  ativa: styles.statusAtiva,
-  analise: styles.statusAnalise,
-  encerrada: styles.statusEncerrada,
+const estadoClass: Record<EstadoOportunidade, string> = {
+  ATIVA: styles.statusAtiva,
+  EXPIRADA: styles.statusAnalise, // amarelo
+  ENCERRADA: styles.statusEncerrada,
 };
 
 export function Perfil() {
+  const navigate = useNavigate();
+  const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [oportunidades, setOportunidades] = useState<Oportunidade[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
@@ -35,12 +30,22 @@ export function Perfil() {
   useEffect(() => {
     let ativo = true;
 
-    listarMinhasOportunidades()
-      .then((dados) => {
-        if (ativo) setOportunidades(dados);
+    Promise.all([buscarPerfil(), listarMinhasOportunidades()])
+      .then(([perfil, lista]) => {
+        if (!ativo) return;
+        setUsuario(perfil);
+        setOportunidades(lista.oportunidades);
       })
-      .catch((e: Error) => {
-        if (ativo) setErro(e.message);
+      .catch((e: unknown) => {
+        if (!ativo) return;
+
+        if (e instanceof ApiError && e.status === 401) {
+          sair();
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        setErro(e instanceof Error ? e.message : "Erro ao carregar o perfil.");
       })
       .finally(() => {
         if (ativo) setCarregando(false);
@@ -49,20 +54,22 @@ export function Perfil() {
     return () => {
       ativo = false;
     };
-  }, []);
+  }, [navigate]);
 
   function handleEditar(id: string) {
     alert(`Editar oportunidade ${id}`);
   }
 
-  async function handleExcluir(id: string) {
-    if (!window.confirm("Deseja excluir esta oportunidade?")) return;
+  async function handleEncerrar(id: string) {
+    if (!window.confirm("Deseja encerrar esta oportunidade?")) return;
 
     try {
-      await excluirOportunidade(id);
-      setOportunidades((atual) => atual.filter((item) => item.id !== id));
+      const atualizada = await encerrarOportunidade(id);
+      setOportunidades((atual) =>
+        atual.map((item) => (item.id === id ? atualizada : item)),
+      );
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Não foi possível excluir.");
+      alert(e instanceof Error ? e.message : "Não foi possível encerrar.");
     }
   }
 
@@ -76,16 +83,22 @@ export function Perfil() {
           <p>Consulte seus dados e gerencie as oportunidades que publicou.</p>
         </section>
 
-        <section className={styles.profileCard}>
-          <div className={styles.avatar} aria-hidden="true">
-            ?
-          </div>
-          <div className={styles.profileInfo}>
-            <h2>{estudante.nome}</h2>
-            <span className={styles.email}>{estudante.email}</span>
-            <span className={styles.badge}>{estudante.tipoConta}</span>
-          </div>
-        </section>
+        {usuario && (
+          <section className={styles.profileCard}>
+            <div className={styles.avatar} aria-hidden="true">
+              {usuario.nome.charAt(0).toUpperCase()}
+            </div>
+            <div className={styles.profileInfo}>
+              <h2>{usuario.nome}</h2>
+              <span className={styles.email}>{usuario.email}</span>
+              <span className={styles.badge}>
+                {usuario.papel === "ADMINISTRADOR"
+                  ? "Administrador"
+                  : "Conta de estudante"}
+              </span>
+            </div>
+          </section>
+        )}
 
         <section className={styles.opportunities}>
           <div className={styles.sectionHeader}>
@@ -104,40 +117,39 @@ export function Perfil() {
           )}
 
           <ul className={styles.opportunityList}>
-            {oportunidades.map((item) => {
-              // Enquanto o banco não tiver status, consideramos "ativa".
-              const status = item.status ?? "ativa";
+            {oportunidades.map((item) => (
+              <li key={item.id} className={styles.opportunityItem}>
+                <div className={styles.opportunityInfo}>
+                  <strong>{item.titulo}</strong>
+                  <span>{item.empresa}</span>
+                </div>
 
-              return (
-                <li key={item.id} className={styles.opportunityItem}>
-                  <div className={styles.opportunityInfo}>
-                    <strong>{item.titulo}</strong>
-                    <span>{item.empresa}</span>
-                  </div>
+                <span className={`${styles.status} ${estadoClass[item.estado]}`}>
+                  {estadoLabel[item.estado]}
+                </span>
 
-                  <span className={`${styles.status} ${statusClass[status]}`}>
-                    {statusLabel[status]}
-                  </span>
-
-                  <div className={styles.actions}>
-                    <button
-                      type="button"
-                      className={styles.editButton}
-                      onClick={() => handleEditar(item.id)}
-                    >
-                      Editar
-                    </button>
-                    <button
-                      type="button"
-                      className={styles.deleteButton}
-                      onClick={() => handleExcluir(item.id)}
-                    >
-                      Excluir
-                    </button>
-                  </div>
-                </li>
-              );
-            })}
+                <div className={styles.actions}>
+                  {item.estado !== "ENCERRADA" && (
+                    <>
+                      <button
+                        type="button"
+                        className={styles.editButton}
+                        onClick={() => handleEditar(item.id)}
+                      >
+                        Editar
+                      </button>
+                      <button
+                        type="button"
+                        className={styles.deleteButton}
+                        onClick={() => handleEncerrar(item.id)}
+                      >
+                        Encerrar
+                      </button>
+                    </>
+                  )}
+                </div>
+              </li>
+            ))}
           </ul>
         </section>
       </div>
