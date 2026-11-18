@@ -1,0 +1,218 @@
+.login {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  overflow: hidden;
+  background-color: #f3f1ff;
+}
+
+/* Painel esquerdo */
+.presentation {
+  position: relative;
+  z-index: 1;
+  width: 53.2%;
+  min-height: 810px;
+  overflow: hidden;
+  background-color: #f3f1ff;
+}
+
+.background {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.5;
+}
+
+.brand {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.logo {
+  position: absolute;
+  top: 252px;
+  width: 207px;
+  height: 160px;
+  object-fit: contain;
+}
+
+.brandName {
+  position: absolute;
+  top: 400px;
+  color: var(--color-navy);
+  font-size: 64px;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+.brandName span {
+  color: var(--color-primary);
+}
+
+.slogan {
+  position: absolute;
+  top: 505px;
+  color: var(--color-navy);
+  font-size: 23px;
+  font-weight: 500;
+  line-height: 25px;
+  text-align: center;
+}
+
+/* Painel direito */
+.formPanel {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex: 1;
+  justify-content: center;
+  min-height: 810px;
+  margin-left: -5.07%;
+  padding: 122px 32px 60px;
+  background-color: var(--color-surface);
+  border: 1px solid #e7e5f0;
+  border-radius: 16px 0 0 16px;
+}
+
+.formContent {
+  width: 100%;
+  max-width: 420px;
+}
+
+/* Cabeçalho */
+.header h2 {
+  color: var(--color-navy);
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.header p {
+  margin-top: 4px;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+/* Formulário */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 56px;
+}
+
+.form input {
+  min-height: 49px;
+}
+
+/* Recuperação de senha */
+.forgotPassword {
+  display: flex;
+  justify-content: center;
+  margin-top: -8px;
+}
+
+.forgotPassword button {
+  padding: 4px;
+  color: var(--color-primary);
+  background: transparent;
+  border: none;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.forgotPassword button:hover {
+  text-decoration: underline;
+}
+
+/* Botão de entrada */
+.submitButton {
+  width: 100%;
+  min-height: 52px;
+  margin-top: 20px;
+}
+
+/* Cadastro */
+.register {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 68px;
+  color: var(--color-text-secondary);
+  font-size: 15px;
+}
+
+.register a {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.register a:hover {
+  text-decoration: underline;
+}
+
+/* Responsividade */
+@media (max-width: 900px) {
+  .presentation {
+    width: 42%;
+  }
+
+  .formPanel {
+    margin-left: -3%;
+  }
+
+  .brandName {
+    font-size: 48px;
+  }
+
+  .logo {
+    width: 160px;
+  }
+
+  .slogan {
+    font-size: 19px;
+  }
+}
+
+@media (max-width: 640px) {
+  .login {
+    min-height: 100vh;
+    overflow: auto;
+  }
+
+  .presentation {
+    display: none;
+  }
+
+  .formPanel {
+    flex: 1;
+    justify-content: center;
+    min-height: 100vh;
+    margin-left: 0;
+    padding: 80px 24px 48px;
+    border: none;
+    border-radius: 0;
+  }
+
+  .header h2 {
+    font-size: 26px;
+  }
+
+  .form {
+    margin-top: 44px;
+  }
+
+  .register {
+    margin-top: 52px;
+    font-size: 13px;
+  }
+}

@@ -1,4 +1,5 @@
 import { BriefcaseBusiness, Building2, MapPin } from "lucide-react";
+
 import { Button } from "../Button/Button";
 import styles from "./OpportunityCard.module.css";
 
@@ -21,35 +22,46 @@ export function OpportunityCard({
 }: OpportunityCardProps) {
   return (
     <article className={styles.card}>
+      {/* Identificação da oportunidade */}
       <div className={styles.header}>
         <div className={styles.iconContainer}>
-          <BriefcaseBusiness size={22} />
+          <BriefcaseBusiness size={26} />
         </div>
 
         <div className={styles.titleContainer}>
           <h2 className={styles.title}>{titulo}</h2>
+
           <div className={styles.company}>
-            <Building2 size={15} />
+            <Building2 size={17} />
             <span>{empresa}</span>
           </div>
         </div>
       </div>
 
+      {/* Descrição */}
+      <p className={styles.description}>
+        {descricao || "Descrição não informada."}
+      </p>
+
+      {/* Tipo e modalidade */}
       <div className={styles.tags}>
         <span className={styles.tag}>{tipo}</span>
 
         {modalidade && (
           <span className={styles.tag}>
-            <MapPin size={13} />
+            <MapPin size={14} />
             {modalidade}
           </span>
         )}
       </div>
 
-      {descricao && <p className={styles.description}>{descricao}</p>}
-
+      {/* Ação */}
       <div className={styles.footer}>
-        <Button variant="primary" onClick={onVerDetalhes}>
+        <Button
+          variant="primary"
+          className={styles.detailsButton}
+          onClick={onVerDetalhes}
+        >
           Ver detalhes
         </Button>
       </div>

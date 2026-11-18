@@ -1,0 +1,280 @@
+.details {
+  width: 100%;
+  min-height: 100vh;
+  padding: 29px 24px 48px;
+  background-color: var(--color-background);
+}
+
+.container {
+  width: 100%;
+  max-width: 1248px;
+  margin: 0 auto;
+}
+
+/* Cabeçalho da página */
+
+.topBar {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 83px;
+}
+
+.logo {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 213px;
+  height: 46px;
+  transform: translateX(-50%);
+  object-fit: contain;
+}
+
+.backButton {
+  position: absolute;
+  top: 16px;
+  left: 0;
+
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  padding: 8px 0;
+  color: var(--color-primary);
+  background: transparent;
+  border: none;
+
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.backButton:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Estrutura dos cartões */
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 850px) 360px;
+  align-items: start;
+  gap: 36px;
+}
+
+/* Cartão principal */
+
+.mainCard {
+  min-height: 630px;
+  padding: 38px 40px;
+
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.header h1 {
+  color: var(--color-navy);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+
+.company {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+
+  color: var(--color-text-secondary);
+  font-size: 20px;
+  font-weight: 500;
+}
+
+.tags {
+  display: flex;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.tag {
+  padding: 6px 16px;
+
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  border-radius: var(--radius-full);
+
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.section {
+  margin-top: 36px;
+}
+
+.section h2 {
+  margin-bottom: 16px;
+  color: var(--color-navy);
+  font-size: 19px;
+  font-weight: 600;
+}
+
+.section p,
+.requirements {
+  color: var(--color-text-secondary);
+  font-size: 15px;
+  line-height: 1.8;
+}
+
+.requirements {
+  padding-left: 20px;
+  list-style: disc;
+}
+
+.requirements li {
+  margin-bottom: 8px;
+}
+
+/* Painéis laterais */
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.sideCard {
+  padding: 32px;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+}
+
+.sideCard h2 {
+  margin-bottom: 16px;
+  color: var(--color-navy);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.sideCard p {
+  min-height: 63px;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Botões laterais */
+
+.applyButton,
+.contactButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  width: 100%;
+  height: 50px;
+  margin-top: 20px;
+
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+}
+
+.applyButton {
+  color: var(--color-text-light);
+  background-color: var(--color-primary);
+  border: none;
+  transition: background-color 0.2s ease;
+}
+
+.applyButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+.contactButton {
+  height: 42px;
+  margin-top: 12px;
+
+  color: var(--color-navy);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  cursor: pointer;
+}
+
+.contactButton:hover:not(:disabled) {
+  border-color: var(--color-primary);
+}
+
+.contactButton:disabled,
+.disabledButton {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.opportunityId {
+  margin-top: 16px;
+  color: var(--color-text-secondary);
+  font-size: 12px;
+  text-align: right;
+}
+
+/* Responsividade */
+
+@media (max-width: 1000px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .mainCard {
+    min-height: auto;
+  }
+
+  .sidebar {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .details {
+    padding: 20px 16px 32px;
+  }
+
+  .topBar {
+    height: 76px;
+  }
+
+  .logo {
+    width: 150px;
+    height: 36px;
+  }
+
+  .backButton {
+    top: 42px;
+    font-size: 13px;
+  }
+
+  .mainCard {
+    padding: 24px 20px;
+  }
+
+  .header h1 {
+    font-size: 21px;
+  }
+
+  .company {
+    font-size: 15px;
+  }
+
+  .sidebar {
+    grid-template-columns: 1fr;
+  }
+
+  .sideCard {
+    padding: 24px;
+  }
+}
