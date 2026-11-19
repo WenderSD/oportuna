@@ -53,6 +53,19 @@
   color: var(--color-primary-hover);
 }
 
+/* Carregando e erro (novo) */
+
+.stateMessage {
+  margin: 40px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.error {
+  color: #e11d48;
+}
+
 /* Estrutura dos cartões */
 
 .contentGrid {
@@ -93,6 +106,7 @@
 
 .tags {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 24px;
 }
@@ -106,6 +120,13 @@
 
   font-size: 12px;
   font-weight: 600;
+}
+
+/* Tag de vaga encerrada ou expirada (novo) */
+
+.tagClosed {
+  color: #5b6475;
+  background-color: #eceef2;
 }
 
 .section {
@@ -124,6 +145,12 @@
   color: var(--color-text-secondary);
   font-size: 15px;
   line-height: 1.8;
+}
+
+/* Mantém as quebras de linha da descrição (novo) */
+
+.description {
+  white-space: pre-line;
 }
 
 .requirements {

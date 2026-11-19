@@ -1,6 +1,9 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
 import styles from "./Perfil.module.css";
+import { Aviso } from "../../components/Aviso/Aviso";
+import type { AvisoDados } from "../../components/Aviso/Aviso";
+import { ConfirmDialog } from "../../components/ConfirmDialog/ConfirmDialog";
 import { ApiError } from "../../services/api";
 import { buscarPerfil, sair } from "../../services/authService";
 import type { Usuario } from "../../services/authService";
@@ -22,10 +25,30 @@ const estadoClass: Record<EstadoOportunidade, string> = {
 
 export function Perfil() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const [usuario, setUsuario] = useState<Usuario | null>(null);
   const [oportunidades, setOportunidades] = useState<Oportunidade[]>([]);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+
+  // Aviso que pode vir de outra tela (ex.: "Oportunidade publicada").
+  const [aviso, setAviso] = useState<AvisoDados | null>(() => {
+    const mensagem = (location.state as { aviso?: string } | null)?.aviso;
+    return mensagem ? { tipo: "sucesso", mensagem } : null;
+  });
+
+  const [paraEncerrar, setParaEncerrar] = useState<Oportunidade | null>(null);
+  const [encerrando, setEncerrando] = useState(false);
+
+  const fecharAviso = useCallback(() => setAviso(null), []);
+
+  // Limpa o estado da navegação, para o aviso não voltar ao recarregar.
+  useEffect(() => {
+    if (location.state) {
+      navigate(location.pathname, { replace: true, state: null });
+    }
+  }, [location.pathname, location.state, navigate]);
 
   useEffect(() => {
     let ativo = true;
@@ -60,21 +83,57 @@ export function Perfil() {
     navigate(`/editar/${id}`);
   }
 
-  async function handleEncerrar(id: string) {
-    if (!window.confirm("Deseja encerrar esta oportunidade?")) return;
+  async function confirmarEncerrar() {
+    if (!paraEncerrar) return;
+
+    setEncerrando(true);
 
     try {
-      const atualizada = await encerrarOportunidade(id);
+      const atualizada = await encerrarOportunidade(paraEncerrar.id);
+
       setOportunidades((atual) =>
-        atual.map((item) => (item.id === id ? atualizada : item)),
+        atual.map((item) => (item.id === atualizada.id ? atualizada : item)),
       );
+
+      setAviso({
+        tipo: "sucesso",
+        mensagem: "Oportunidade encerrada com sucesso.",
+      });
     } catch (e) {
-      alert(e instanceof Error ? e.message : "Não foi possível encerrar.");
+      if (e instanceof ApiError && e.status === 401) {
+        sair();
+        navigate("/login", { replace: true });
+        return;
+      }
+
+      setAviso({
+        tipo: "erro",
+        mensagem:
+          e instanceof Error
+            ? e.message
+            : "Não foi possível encerrar a oportunidade.",
+      });
+    } finally {
+      setEncerrando(false);
+      setParaEncerrar(null);
     }
   }
 
   return (
     <div className={styles.perfil}>
+      <Aviso aviso={aviso} onFechar={fecharAviso} />
+
+      <ConfirmDialog
+        aberto={paraEncerrar !== null}
+        titulo="Encerrar oportunidade"
+        mensagem={`Deseja encerrar "${paraEncerrar?.titulo ?? ""}"? Depois de encerrada, ela não poderá mais ser editada.`}
+        confirmarLabel="Encerrar"
+        perigo
+        carregando={encerrando}
+        onConfirmar={confirmarEncerrar}
+        onCancelar={() => setParaEncerrar(null)}
+      />
+
       <div className={styles.container}>
         <section className={styles.header}>
           <h1>
@@ -141,7 +200,7 @@ export function Perfil() {
                       <button
                         type="button"
                         className={styles.deleteButton}
-                        onClick={() => handleEncerrar(item.id)}
+                        onClick={() => setParaEncerrar(item)}
                       >
                         Encerrar
                       </button>

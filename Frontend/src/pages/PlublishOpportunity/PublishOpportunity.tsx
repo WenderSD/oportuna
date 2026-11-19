@@ -117,7 +117,14 @@ export function PublishOpportunity() {
       } else {
         await criarOportunidade(dados);
       }
-      navigate("/perfil");
+      navigate("/perfil", {
+        state: {
+          aviso: id
+            ? "Oportunidade atualizada com sucesso."
+            : "Oportunidade publicada com sucesso.",
+        },
+      });
+      
     } catch (e) {
       if (sessaoExpirou(e)) {
         sair();

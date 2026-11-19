@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { FormEvent } from "react";
+import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { OpportunityCard } from "../../components/OpportunityCard/OpportunityCard";
@@ -9,7 +9,11 @@ import { ApiError } from "../../services/api";
 import { sair } from "../../services/authService";
 import { listarOportunidades } from "../../services/oportunidadeService";
 import { modalidadeLabel, tipoLabel } from "../../types/oportunidade";
-import type { Oportunidade } from "../../types/oportunidade";
+import type {
+  Modalidade,
+  Oportunidade,
+  TipoOportunidade,
+} from "../../types/oportunidade";
 
 import styles from "./Home.module.css";
 
@@ -19,6 +23,9 @@ const searchSuggestions = [
   "Jovem Aprendiz",
   "Suporte técnico",
 ];
+
+const tipos = Object.keys(tipoLabel) as TipoOportunidade[];
+const modalidades = Object.keys(modalidadeLabel) as Modalidade[];
 
 export function Home() {
   const navigate = useNavigate();
@@ -33,10 +40,20 @@ export function Home() {
   const [searchTerm, setSearchTerm] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
 
+  const [tipo, setTipo] = useState<TipoOportunidade | "">("");
+  const [modalidade, setModalidade] = useState<Modalidade | "">("");
+
+  const temFiltro = tipo !== "" || modalidade !== "";
+
+  // Busca no backend sempre que um filtro muda.
   useEffect(() => {
     let ativo = true;
 
-    listarOportunidades({ pagina: 1 })
+    listarOportunidades({
+      pagina: 1,
+      tipo: tipo || undefined,
+      modalidade: modalidade || undefined,
+    })
       .then((lista) => {
         if (!ativo) return;
         setOportunidades(lista.oportunidades);
@@ -63,13 +80,39 @@ export function Home() {
     return () => {
       ativo = false;
     };
-  }, [navigate]);
+  }, [tipo, modalidade, navigate]);
+
+  function iniciarCarga() {
+    setCarregando(true);
+    setErro(null);
+  }
+
+  function handleTipo(event: ChangeEvent<HTMLSelectElement>) {
+    iniciarCarga();
+    setTipo(event.target.value as TipoOportunidade | "");
+  }
+
+  function handleModalidade(event: ChangeEvent<HTMLSelectElement>) {
+    iniciarCarga();
+    setModalidade(event.target.value as Modalidade | "");
+  }
+
+  function limparFiltros() {
+    iniciarCarga();
+    setTipo("");
+    setModalidade("");
+  }
 
   async function handleCarregarMais() {
     setCarregandoMais(true);
 
     try {
-      const lista = await listarOportunidades({ pagina: pagina + 1 });
+      const lista = await listarOportunidades({
+        pagina: pagina + 1,
+        tipo: tipo || undefined,
+        modalidade: modalidade || undefined,
+      });
+
       setOportunidades((atual) => [...atual, ...lista.oportunidades]);
       setPagina(lista.paginacao.pagina);
       setTotalPaginas(lista.paginacao.totalPaginas);
@@ -156,6 +199,54 @@ export function Home() {
               ))}
             </div>
           </div>
+
+          <div className={styles.filters}>
+            <div className={styles.filterField}>
+              <label htmlFor="filtro-tipo">Tipo</label>
+
+              <select
+                id="filtro-tipo"
+                className={styles.select}
+                value={tipo}
+                onChange={handleTipo}
+              >
+                <option value="">Todos os tipos</option>
+                {tipos.map((valor) => (
+                  <option key={valor} value={valor}>
+                    {tipoLabel[valor]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className={styles.filterField}>
+              <label htmlFor="filtro-modalidade">Modalidade</label>
+
+              <select
+                id="filtro-modalidade"
+                className={styles.select}
+                value={modalidade}
+                onChange={handleModalidade}
+              >
+                <option value="">Todas as modalidades</option>
+                {modalidades.map((valor) => (
+                  <option key={valor} value={valor}>
+                    {modalidadeLabel[valor]}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {temFiltro && (
+              <button
+                type="button"
+                className={styles.clearFilters}
+                onClick={limparFiltros}
+              >
+                Limpar filtros
+              </button>
+            )}
+          </div>
         </section>
 
         <section className={styles.opportunities}>
@@ -191,8 +282,8 @@ export function Home() {
                 ))
               ) : (
                 <p className={styles.emptyMessage}>
-                  {appliedSearch
-                    ? "Nenhuma oportunidade encontrada para essa pesquisa. Tente utilizar outras palavras-chave."
+                  {appliedSearch || temFiltro
+                    ? "Nenhuma oportunidade encontrada. Tente outras palavras-chave ou remova os filtros."
                     : "Ainda não há oportunidades publicadas."}
                 </p>
               )}
