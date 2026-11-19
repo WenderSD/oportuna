@@ -57,7 +57,7 @@ export function Perfil() {
   }, [navigate]);
 
   function handleEditar(id: string) {
-    alert(`Editar oportunidade ${id}`);
+    navigate(`/editar/${id}`);
   }
 
   async function handleEncerrar(id: string) {

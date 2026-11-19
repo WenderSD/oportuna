@@ -7,6 +7,12 @@ export interface Usuario {
   papel: "USUARIO" | "ADMINISTRADOR";
 }
 
+export interface DadosCadastro {
+  nome: string;
+  email: string;
+  senha: string;
+}
+
 const USE_MOCK = import.meta.env.VITE_USE_MOCK === "true";
 
 const espera = (ms: number) => new Promise((r) => setTimeout(r, ms));
@@ -20,6 +26,18 @@ const usuarioMock: Usuario = {
 
 export function sair() {
   localStorage.removeItem("token");
+}
+
+export async function cadastrar(dados: DadosCadastro): Promise<void> {
+  if (USE_MOCK) {
+    await espera(400);
+    return;
+  }
+
+  await api("/api/usuarios", {
+    method: "POST",
+    body: JSON.stringify(dados),
+  });
 }
 
 export async function login(email: string, senha: string): Promise<void> {

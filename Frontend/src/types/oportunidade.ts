@@ -28,6 +28,27 @@ export interface Paginacao {
   totalPaginas: number;
 }
 
+export interface DadosOportunidade {
+  titulo: string;
+  descricao: string;
+  empresa: string;
+  localizacao?: string;
+  modalidade: Modalidade;
+  tipo: TipoOportunidade;
+  requisitos?: string[];
+  linkCandidatura?: string;
+  emailContato?: string;
+  expiraEm?: string;
+}
+
+export interface FiltrosOportunidades {
+  tipo?: TipoOportunidade;
+  modalidade?: Modalidade;
+  estado?: EstadoOportunidade;
+  pagina?: number;
+  limite?: number;
+}
+
 export const modalidadeLabel: Record<Modalidade, string> = {
   PRESENCIAL: "Presencial",
   HIBRIDO: "Híbrido",

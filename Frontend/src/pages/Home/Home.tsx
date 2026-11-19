@@ -1,10 +1,15 @@
-
-import { useState, type FormEvent } from "react";
+import { useEffect, useState } from "react";
+import type { FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { OpportunityCard } from "../../components/OpportunityCard/OpportunityCard";
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
+import { ApiError } from "../../services/api";
+import { sair } from "../../services/authService";
+import { listarOportunidades } from "../../services/oportunidadeService";
+import { modalidadeLabel, tipoLabel } from "../../types/oportunidade";
+import type { Oportunidade } from "../../types/oportunidade";
 
 import styles from "./Home.module.css";
 
@@ -15,23 +20,65 @@ const searchSuggestions = [
   "Suporte técnico",
 ];
 
-const opportunities = [
-  {
-    id: 1,
-    titulo: "Estágio em Desenvolvimento de Software",
-    empresa: "Empresa Exemplo",
-    tipo: "Estágio",
-    modalidade: "Híbrido",
-    descricao:
-      "Oportunidade para estudantes de tecnologia interessados em desenvolvimento de aplicações web.",
-  },
-];
-
 export function Home() {
   const navigate = useNavigate();
 
+  const [oportunidades, setOportunidades] = useState<Oportunidade[]>([]);
+  const [pagina, setPagina] = useState(1);
+  const [totalPaginas, setTotalPaginas] = useState(1);
+  const [carregando, setCarregando] = useState(true);
+  const [carregandoMais, setCarregandoMais] = useState(false);
+  const [erro, setErro] = useState<string | null>(null);
+
   const [searchTerm, setSearchTerm] = useState("");
   const [appliedSearch, setAppliedSearch] = useState("");
+
+  useEffect(() => {
+    let ativo = true;
+
+    listarOportunidades({ pagina: 1 })
+      .then((lista) => {
+        if (!ativo) return;
+        setOportunidades(lista.oportunidades);
+        setPagina(lista.paginacao.pagina);
+        setTotalPaginas(lista.paginacao.totalPaginas);
+      })
+      .catch((e: unknown) => {
+        if (!ativo) return;
+
+        if (e instanceof ApiError && e.status === 401) {
+          sair();
+          navigate("/login", { replace: true });
+          return;
+        }
+
+        setErro(
+          e instanceof Error ? e.message : "Erro ao carregar as oportunidades.",
+        );
+      })
+      .finally(() => {
+        if (ativo) setCarregando(false);
+      });
+
+    return () => {
+      ativo = false;
+    };
+  }, [navigate]);
+
+  async function handleCarregarMais() {
+    setCarregandoMais(true);
+
+    try {
+      const lista = await listarOportunidades({ pagina: pagina + 1 });
+      setOportunidades((atual) => [...atual, ...lista.oportunidades]);
+      setPagina(lista.paginacao.pagina);
+      setTotalPaginas(lista.paginacao.totalPaginas);
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Erro ao carregar mais vagas.");
+    } finally {
+      setCarregandoMais(false);
+    }
+  }
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -43,18 +90,21 @@ export function Home() {
     setAppliedSearch(suggestion);
   }
 
-  const filteredOpportunities = opportunities.filter((opportunity) => {
+  const termo = appliedSearch.toLowerCase();
+
+  const filteredOpportunities = oportunidades.filter((opportunity) => {
     const searchableContent = [
       opportunity.titulo,
       opportunity.empresa,
-      opportunity.tipo,
-      opportunity.modalidade,
+      tipoLabel[opportunity.tipo],
+      modalidadeLabel[opportunity.modalidade],
       opportunity.descricao,
+      opportunity.localizacao ?? "",
     ]
       .join(" ")
       .toLowerCase();
 
-    return searchableContent.includes(appliedSearch.toLowerCase());
+    return searchableContent.includes(termo);
   });
 
   return (
@@ -69,10 +119,7 @@ export function Home() {
         </section>
 
         <section className={styles.searchContainer}>
-          <form
-            className={styles.searchSection}
-            onSubmit={handleSearch}
-          >
+          <form className={styles.searchSection} onSubmit={handleSearch}>
             <Input
               id="search"
               label="Pesquisar oportunidades"
@@ -92,9 +139,7 @@ export function Home() {
           </form>
 
           <div className={styles.suggestions}>
-            <span className={styles.suggestionsLabel}>
-              Sugestões:
-            </span>
+            <span className={styles.suggestionsLabel}>Sugestões:</span>
 
             <div className={styles.suggestionList}>
               {searchSuggestions.map((suggestion) => (
@@ -122,28 +167,48 @@ export function Home() {
             </h2>
           </div>
 
-          <div className={styles.opportunityList}>
-            {filteredOpportunities.length > 0 ? (
-              filteredOpportunities.map((opportunity) => (
-                <OpportunityCard
-                  key={opportunity.id}
-                  titulo={opportunity.titulo}
-                  empresa={opportunity.empresa}
-                  tipo={opportunity.tipo}
-                  modalidade={opportunity.modalidade}
-                  descricao={opportunity.descricao}
-                  onVerDetalhes={() =>
-                    navigate(`/oportunidade/${opportunity.id}`)
-                  }
-                />
-              ))
-            ) : (
-              <p className={styles.emptyMessage}>
-                Nenhuma oportunidade encontrada para essa pesquisa.
-                Tente utilizar outras palavras-chave.
-              </p>
-            )}
-          </div>
+          {carregando && (
+            <p className={styles.emptyMessage}>Carregando oportunidades...</p>
+          )}
+
+          {erro && <p className={styles.error}>{erro}</p>}
+
+          {!carregando && !erro && (
+            <div className={styles.opportunityList}>
+              {filteredOpportunities.length > 0 ? (
+                filteredOpportunities.map((opportunity) => (
+                  <OpportunityCard
+                    key={opportunity.id}
+                    titulo={opportunity.titulo}
+                    empresa={opportunity.empresa}
+                    tipo={tipoLabel[opportunity.tipo]}
+                    modalidade={modalidadeLabel[opportunity.modalidade]}
+                    descricao={opportunity.descricao}
+                    onVerDetalhes={() =>
+                      navigate(`/oportunidade/${opportunity.id}`)
+                    }
+                  />
+                ))
+              ) : (
+                <p className={styles.emptyMessage}>
+                  {appliedSearch
+                    ? "Nenhuma oportunidade encontrada para essa pesquisa. Tente utilizar outras palavras-chave."
+                    : "Ainda não há oportunidades publicadas."}
+                </p>
+              )}
+            </div>
+          )}
+
+          {!carregando && pagina < totalPaginas && (
+            <button
+              type="button"
+              className={styles.loadMore}
+              onClick={handleCarregarMais}
+              disabled={carregandoMais}
+            >
+              {carregandoMais ? "Carregando..." : "Carregar mais"}
+            </button>
+          )}
         </section>
       </div>
     </main>

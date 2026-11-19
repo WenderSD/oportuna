@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import { PublishOpportunity } from "../pages/PlublishOpportunity/PublishOpportunity";
 import { MainLayout } from "../layouts/MainLayout/MainLayout";
 import { Login } from "../pages/Login/Login";
+import { Cadastro } from "../pages/Cadastro/Cadastro";
 import { Home } from "../pages/Home/Home";
 import { OpportunityDetails } from "../pages/OpportunityDetails/OpportunityDetails";
 import { Perfil } from "../pages/Perfil/Perfil";
@@ -11,11 +12,13 @@ export function AppRoutes() {
     <Routes>
       {/* Autenticação: sem Navbar */}
       <Route path="/login" element={<Login />} />
+      <Route path="/cadastro" element={<Cadastro />} />
 
       {/* Área principal: com Navbar */}
       <Route element={<MainLayout />}>
         <Route path="/home" element={<Home />} />
         <Route path="/publicar" element={<PublishOpportunity />} />
+        <Route path="/editar/:id" element={<PublishOpportunity />} />
         <Route path="/perfil" element={<Perfil />} />
       </Route>
 
