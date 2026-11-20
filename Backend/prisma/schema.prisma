@@ -52,6 +52,7 @@ model Oportunidade {
   encerradaEm       DateTime?
   criadoEm          DateTime           @default(now())
   atualizadoEm     DateTime           @updatedAt
+  renda             String?
 
   autorId String
   autor   Usuario @relation(fields: [autorId], references: [id], onDelete: Restrict)

@@ -1,4 +1,5 @@
 import { type Oportunidade, Prisma } from "../../generated/prisma/client.js";
+import { ModalidadeTrabalho, TipoOportunidade } from "../../generated/prisma/enums.js";
 import { AppError } from "../lib/AppError.js";
 import { prisma } from "../lib/prisma.js";
 import type {
@@ -31,6 +32,36 @@ function filtroEstado(estado: string, agora: Date): Prisma.OportunidadeWhereInpu
     OR: [{ expiraEm: null }, { expiraEm: { gt: agora } }],
   };
 }
+// No LIKE do PostgreSQL, % e _ são curingas: aqui eles passam a valer como texto comum.
+const escaparCuringas = (texto: string) => texto.replace(/[\\%_]/g, "\\$&");
+
+const semAcento = (texto: string) => texto.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+
+// Cada palavra digitada precisa aparecer em pelo menos um campo da oportunidade.
+function filtroPalavra(palavra: string): Prisma.OportunidadeWhereInput {
+  const minuscula = palavra.toLowerCase();
+  const capitalizada = minuscula.charAt(0).toUpperCase() + minuscula.slice(1);
+  const normal = semAcento(palavra);
+
+  const trecho = escaparCuringas(palavra);
+
+  const condicoes: Prisma.OportunidadeWhereInput[] = [
+    { titulo: { contains: trecho, mode: "insensitive" } },
+    { empresa: { contains: trecho, mode: "insensitive" } },
+    { descricao: { contains: trecho, mode: "insensitive" } },
+    { localizacao: { contains: trecho, mode: "insensitive" } },
+    { requisitos: { hasSome: [palavra, minuscula, capitalizada] } },
+  ];
+
+  // Os rótulos da tela (Estágio, Remoto, Híbrido...) também funcionam como palavra de busca.
+  const tipo = Object.values(TipoOportunidade).find((valor) => semAcento(valor) === normal);
+  if (tipo) condicoes.push({ tipo });
+
+  const modalidade = Object.values(ModalidadeTrabalho).find((valor) => semAcento(valor) === normal);
+  if (modalidade) condicoes.push({ modalidade });
+
+  return { OR: condicoes };
+}
 
 export class OportunidadeService {
   async criar(dados: CriarOportunidadeInput, autorId: string) {
@@ -45,11 +76,13 @@ export class OportunidadeService {
 
   async listar(filtros: ListarOportunidadesInput, autorId?: string) {
     const agora = new Date();
+    const palavras = (filtros.busca ?? "").split(/\s+/).filter(Boolean).slice(0, 5);
     const where: Prisma.OportunidadeWhereInput = {
       tipo: filtros.tipo,
       modalidade: filtros.modalidade,
       ...(autorId ? { autorId } : {}),
       ...(!autorId || filtros.estado ? filtroEstado(filtros.estado ?? "ATIVA", agora) : {}),
+      ...(palavras.length > 0 ? { AND: palavras.map(filtroPalavra) } : {}),
     };
 
     const [oportunidades, total] = await prisma.$transaction(
