@@ -6,6 +6,8 @@ import { prisma } from "./lib/prisma.js";
 import { tratarErros } from "./middlewares/tratarErros.js";
 import oportunidadeRouter from "./routes/oportunidade.routes.js";
 import usuarioRouter from "./routes/usuario.routes.js";
+import swaggerUi from "swagger-ui-express";
+import { openApiDocument } from "./docs-api/openapi.js";
 
 z.config(z.locales.pt());
 
@@ -13,6 +15,7 @@ export const app = express();
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", application: "OportUna API" });
