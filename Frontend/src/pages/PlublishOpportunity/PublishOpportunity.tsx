@@ -92,6 +92,13 @@ export function PublishOpportunity() {
     const form = event.currentTarget;
     const prazo = valor(form, "expiraEm");
     const rendaTexto = valor(form, "renda");
+    const link = valor(form, "linkCandidatura");
+
+    // Garante o link mesmo se alguém burlar o "required" do navegador.
+    if (!link) {
+      setErro("Informe o link de candidatura.");
+      return;
+    }
 
     const dados: DadosOportunidade = {
       titulo: valor(form, "titulo"),
@@ -104,7 +111,7 @@ export function PublishOpportunity() {
         .split("\n")
         .map((linha) => linha.trim())
         .filter(Boolean),
-      linkCandidatura: valor(form, "linkCandidatura"),
+      linkCandidatura: link,
       emailContato: valor(form, "emailContato"),
       renda: rendaTexto ? Number(rendaTexto) : undefined,
       expiraEm: prazo
@@ -286,10 +293,11 @@ export function PublishOpportunity() {
                   <Input
                     id="linkCandidatura"
                     name="linkCandidatura"
-                    label="Link de candidatura (opcional)"
+                    label="Link de candidatura"
                     type="url"
                     placeholder="https://..."
                     defaultValue={inicial?.linkCandidatura ?? ""}
+                    required
                   />
 
                   <Input
