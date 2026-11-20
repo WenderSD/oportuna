@@ -111,6 +111,11 @@
   gap: 24px;
 }
 
+/* Campo com metade da largura (mesmo tamanho de uma coluna da .row) */
+.halfField {
+  width: calc(50% - 12px);
+}
+
 .hint {
   margin: 0;
   color: var(--color-text-secondary);
@@ -191,6 +196,10 @@
 
   .row {
     grid-template-columns: 1fr;
+  }
+
+  .halfField {
+    width: 100%;
   }
 
   .tipCard {

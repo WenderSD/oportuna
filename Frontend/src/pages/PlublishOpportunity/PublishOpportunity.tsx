@@ -3,6 +3,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
+import { ModalInfo } from "../../components/ModalInfo/ModalInfo";
 import { ApiError } from "../../services/api";
 import { sair } from "../../services/authService";
 import {
@@ -54,6 +55,7 @@ export function PublishOpportunity() {
   const [carregando, setCarregando] = useState(editando);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
+  const [publicada, setPublicada] = useState(false);
 
   // Modo edição: carrega a vaga para preencher o formulário.
   useEffect(() => {
@@ -89,6 +91,7 @@ export function PublishOpportunity() {
 
     const form = event.currentTarget;
     const prazo = valor(form, "expiraEm");
+    const rendaTexto = valor(form, "renda");
 
     const dados: DadosOportunidade = {
       titulo: valor(form, "titulo"),
@@ -103,6 +106,7 @@ export function PublishOpportunity() {
         .filter(Boolean),
       linkCandidatura: valor(form, "linkCandidatura"),
       emailContato: valor(form, "emailContato"),
+      renda: rendaTexto ? Number(rendaTexto) : undefined,
       expiraEm: prazo
         ? new Date(`${prazo}T23:59:59`).toISOString()
         : undefined,
@@ -114,17 +118,13 @@ export function PublishOpportunity() {
     try {
       if (id) {
         await editarOportunidade(id, dados);
+        navigate("/perfil", {
+          state: { aviso: "Oportunidade atualizada com sucesso." },
+        });
       } else {
         await criarOportunidade(dados);
+        setPublicada(true);
       }
-      navigate("/perfil", {
-        state: {
-          aviso: id
-            ? "Oportunidade atualizada com sucesso."
-            : "Oportunidade publicada com sucesso.",
-        },
-      });
-      
     } catch (e) {
       if (sessaoExpirou(e)) {
         sair();
@@ -144,6 +144,18 @@ export function PublishOpportunity() {
 
   return (
     <div className={styles.page}>
+      <ModalInfo
+        aberto={publicada}
+        titulo="Oportunidade publicada!"
+        botaoLabel="Voltar ao início"
+        centralizado
+        onFechar={() => navigate("/home")}
+      >
+        <p>
+          Sua oportunidade foi cadastrada com sucesso na plataforma OportUna.
+        </p>
+      </ModalInfo>
+
       <div className={styles.container}>
         <header className={styles.header}>
           <h1>{editando ? "Editar oportunidade" : "Publicar oportunidade"}</h1>
@@ -224,13 +236,26 @@ export function PublishOpportunity() {
                   </div>
                 </div>
 
-                <Input
-                  id="localizacao"
-                  name="localizacao"
-                  label="Localização (opcional)"
-                  placeholder="Ex.: Barretos - SP"
-                  defaultValue={inicial?.localizacao ?? ""}
-                />
+                <div className={styles.row}>
+                  <Input
+                    id="localizacao"
+                    name="localizacao"
+                    label="Localização (opcional)"
+                    placeholder="Ex.: Barretos - SP"
+                    defaultValue={inicial?.localizacao ?? ""}
+                  />
+
+                  <Input
+                    id="renda"
+                    name="renda"
+                    label="Renda mensal em R$ (opcional)"
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    placeholder="Ex.: 1500"
+                    defaultValue={inicial?.renda ?? ""}
+                  />
+                </div>
 
                 <div className={styles.field}>
                   <label htmlFor="descricao">Descrição</label>
@@ -277,13 +302,16 @@ export function PublishOpportunity() {
                   />
                 </div>
 
-                <Input
-                  id="expiraEm"
-                  name="expiraEm"
-                  label="Prazo para candidaturas (opcional)"
-                  type="date"
-                  defaultValue={paraData(inicial?.expiraEm ?? null)}
-                />
+                {/* Mesma largura do campo de link acima */}
+                <div className={styles.halfField}>
+                  <Input
+                    id="expiraEm"
+                    name="expiraEm"
+                    label="Prazo para candidaturas (opcional)"
+                    type="date"
+                    defaultValue={paraData(inicial?.expiraEm ?? null)}
+                  />
+                </div>
 
                 {erro && (
                   <p className={styles.error} role="alert">

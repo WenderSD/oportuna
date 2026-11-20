@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { LogOut } from "lucide-react";
 import styles from "./Perfil.module.css";
 import { Aviso } from "../../components/Aviso/Aviso";
 import type { AvisoDados } from "../../components/Aviso/Aviso";
@@ -32,7 +33,7 @@ export function Perfil() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
 
-  // Aviso que pode vir de outra tela (ex.: "Oportunidade publicada").
+  // Aviso que pode vir de outra tela (ex.: "Oportunidade atualizada").
   const [aviso, setAviso] = useState<AvisoDados | null>(() => {
     const mensagem = (location.state as { aviso?: string } | null)?.aviso;
     return mensagem ? { tipo: "sucesso", mensagem } : null;
@@ -40,6 +41,7 @@ export function Perfil() {
 
   const [paraEncerrar, setParaEncerrar] = useState<Oportunidade | null>(null);
   const [encerrando, setEncerrando] = useState(false);
+  const [confirmandoSaida, setConfirmandoSaida] = useState(false);
 
   const fecharAviso = useCallback(() => setAviso(null), []);
 
@@ -81,6 +83,11 @@ export function Perfil() {
 
   function handleEditar(id: string) {
     navigate(`/editar/${id}`);
+  }
+
+  function handleSair() {
+    sair();
+    navigate("/login", { replace: true });
   }
 
   async function confirmarEncerrar() {
@@ -134,6 +141,17 @@ export function Perfil() {
         onCancelar={() => setParaEncerrar(null)}
       />
 
+      <ConfirmDialog
+        aberto={confirmandoSaida}
+        titulo="Sair da conta"
+        mensagem="Deseja realmente sair da sua conta?"
+        confirmarLabel="Sair"
+        perigo
+        carregando={false}
+        onConfirmar={handleSair}
+        onCancelar={() => setConfirmandoSaida(false)}
+      />
+
       <div className={styles.container}>
         <section className={styles.header}>
           <h1>
@@ -147,6 +165,7 @@ export function Perfil() {
             <div className={styles.avatar} aria-hidden="true">
               {usuario.nome.charAt(0).toUpperCase()}
             </div>
+
             <div className={styles.profileInfo}>
               <h2>{usuario.nome}</h2>
               <span className={styles.email}>{usuario.email}</span>
@@ -156,6 +175,15 @@ export function Perfil() {
                   : "Conta de estudante"}
               </span>
             </div>
+
+            <button
+              type="button"
+              className={styles.logoutButton}
+              onClick={() => setConfirmandoSaida(true)}
+            >
+              <LogOut size={16} />
+              Sair da conta
+            </button>
           </section>
         )}
 

@@ -22,7 +22,7 @@
 
 .welcome h1 {
   margin: 0;
-  color: var(--color-text-primary);
+  color: var(--color-navy);
   font-size: 28px;
   font-weight: 700;
   line-height: 1.3;
@@ -39,41 +39,86 @@
 .searchContainer {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 24px;
   width: 100%;
 }
 
-.searchSection {
+/* Barra de busca com o botão encostado na borda direita */
+.searchBar {
   display: flex;
-  align-items: flex-end;
-  gap: 12px;
+  align-items: stretch;
   width: 100%;
+  height: 58px;
+  overflow: hidden;
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s ease;
 }
 
-.searchInput {
+.searchBar:focus-within {
+  border-color: var(--color-primary);
+}
+
+.searchIcon {
+  flex-shrink: 0;
+  align-self: center;
+  margin-left: 20px;
+  color: var(--color-text-primary);
+}
+
+.searchField {
   flex: 1;
   min-width: 0;
+  padding: 0 16px;
+  color: var(--color-text-primary);
+  background: transparent;
+  border: none;
+  font-size: 14px;
+}
+
+.searchField:focus {
+  outline: none;
+}
+
+.searchField::placeholder {
+  color: var(--color-text-secondary);
 }
 
 .searchButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   flex-shrink: 0;
-  min-width: 130px;
+  width: 64px;
+  color: var(--color-text-light);
+  background-color: var(--color-primary);
+  border: none;
+  border-radius: var(--radius-md);
+  transition: background-color 0.2s ease;
 }
 
-/* Sugestões de pesquisa */
-.suggestions {
+.searchButton:hover {
+  background-color: var(--color-primary-hover);
+}
+
+/* Título ao lado do conteúdo */
+.inlineRow {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 16px;
 }
 
-.suggestionsLabel {
-  color: var(--color-text-secondary);
-  font-size: 13px;
-  font-weight: 500;
+.blockTitle {
+  margin: 0;
+  color: var(--color-navy);
+  font-size: 16px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 
+/* Sugestões de pesquisa */
 .suggestionList {
   display: flex;
   align-items: center;
@@ -82,13 +127,13 @@
 }
 
 .suggestion {
-  padding: 8px 16px;
+  padding: 6px 18px;
   color: var(--color-primary);
   background-color: var(--color-primary-light);
   border: 1px solid transparent;
   border-radius: var(--radius-full);
   font-size: 12px;
-  font-weight: 500;
+  font-weight: 600;
   transition:
     background-color 0.2s ease,
     border-color 0.2s ease,
@@ -114,42 +159,46 @@
 /* Filtros por tipo e modalidade */
 .filters {
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   flex-wrap: wrap;
-  gap: 12px;
+  gap: 32px;
 }
 
-.filterField {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.filterField label {
-  color: var(--color-text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-}
-
+/* Select sem a caixa padrão do navegador e com seta própria */
 .select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
   min-width: 200px;
   height: 42px;
-  padding: 0 14px;
+  padding: 0 40px 0 14px;
   color: var(--color-text-primary);
   background-color: var(--color-surface);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23747a91' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
   border: 1px solid var(--color-border);
   border-radius: 10px;
   font-family: var(--font-primary);
   font-size: 13px;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
 }
 
-.select:focus {
-  outline: none;
+.select:hover {
   border-color: var(--color-primary);
-  box-shadow: 0 0 0 3px rgba(2, 170, 166, 0.12);
+}
+
+.select:focus,
+.select:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
+/* Remove a seta padrão no Edge antigo */
+.select::-ms-expand {
+  display: none;
 }
 
 .clearFilters {
@@ -170,26 +219,32 @@
 .opportunities {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .sectionHeader {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .sectionHeader h2 {
   margin: 0;
-  color: var(--color-text-primary);
-  font-size: 21px;
-  font-weight: 600;
+  color: var(--color-navy);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.sectionHeader p {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
 }
 
 .opportunityList {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 14px;
 }
 
 .emptyMessage {
@@ -241,27 +296,15 @@
     font-size: 24px;
   }
 
-  .searchSection {
+  .filters {
+    gap: 16px;
+  }
+
+  .inlineRow {
     flex-direction: column;
-    align-items: stretch;
-  }
-
-  .searchButton {
-    width: 100%;
-  }
-
-  .suggestions {
     align-items: flex-start;
-    flex-direction: column;
     gap: 10px;
-  }
-
-  .suggestionList {
-    gap: 8px;
-  }
-
-  .filterField {
-    flex: 1 1 100%;
+    width: 100%;
   }
 
   .select {
@@ -286,8 +329,20 @@
     font-size: 14px;
   }
 
+  .searchBar {
+    height: 52px;
+  }
+
+  .searchIcon {
+    margin-left: 14px;
+  }
+
+  .searchButton {
+    width: 54px;
+  }
+
   .suggestion {
-    padding: 7px 12px;
+    padding: 6px 12px;
     font-size: 11px;
   }
 }

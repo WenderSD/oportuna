@@ -13,6 +13,7 @@ export interface Oportunidade {
   requisitos: string[];
   linkCandidatura: string | null;
   emailContato: string | null;
+  renda: number | null;
   expiraEm: string | null;
   encerradaEm: string | null;
   criadoEm: string;
@@ -38,6 +39,7 @@ export interface DadosOportunidade {
   requisitos?: string[];
   linkCandidatura?: string;
   emailContato?: string;
+  renda?: number;
   expiraEm?: string;
 }
 
@@ -67,3 +69,9 @@ export const estadoLabel: Record<EstadoOportunidade, string> = {
   EXPIRADA: "Expirada",
   ENCERRADA: "Encerrada",
 };
+
+// Exibe a renda em reais ou "A combinar" quando não informada.
+export function formatarRenda(renda: number | null | undefined) {
+  if (renda === null || renda === undefined) return "A combinar";
+  return renda.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}

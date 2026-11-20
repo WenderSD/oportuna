@@ -1,19 +1,23 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { ArrowLeft, Building2, ExternalLink } from "lucide-react";
 
 import logoDetails from "../../assets/images/logo-oportuna-details.png";
+import { ModalInfo } from "../../components/ModalInfo/ModalInfo";
 import { ApiError } from "../../services/api";
 import { sair } from "../../services/authService";
 import { buscarOportunidade } from "../../services/oportunidadeService";
 import {
   estadoLabel,
+  formatarRenda,
   modalidadeLabel,
   tipoLabel,
 } from "../../types/oportunidade";
 import type { Oportunidade } from "../../types/oportunidade";
 
 import styles from "./OpportunityDetails.module.css";
+
+type ModalAberto = "contato" | "candidatura" | null;
 
 function formatarData(iso: string) {
   return new Date(iso).toLocaleDateString("pt-BR");
@@ -26,6 +30,9 @@ export function OpportunityDetails() {
   const [oportunidade, setOportunidade] = useState<Oportunidade | null>(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
+  const [modal, setModal] = useState<ModalAberto>(null);
+
+  const fecharModal = useCallback(() => setModal(null), []);
 
   useEffect(() => {
     if (!id) return;
@@ -57,13 +64,49 @@ export function OpportunityDetails() {
     };
   }, [id, navigate]);
 
-  // Só dá para se candidatar a vagas ativas.
+  // Só dá para se candidatar a vagas ativas que tenham link.
   const aberta = oportunidade?.estado === "ATIVA";
   const candidaturaUrl = aberta ? (oportunidade?.linkCandidatura ?? "") : "";
   const contato = oportunidade?.emailContato ?? "";
 
+  // Abre o link da empresa em uma nova aba.
+  function acessarLink() {
+    window.open(candidaturaUrl, "_blank", "noopener,noreferrer");
+    setModal(null);
+  }
+
   return (
     <main className={styles.details}>
+      <ModalInfo
+        aberto={modal === "contato"}
+        titulo="Contato da empresa"
+        botaoLabel="Fechar"
+        onFechar={fecharModal}
+      >
+        <p>{oportunidade?.empresa}</p>
+        {contato ? (
+          <p>
+            <a href={`mailto:${contato}`}>{contato}</a>
+          </p>
+        ) : (
+          <p>Contato não informado pelo divulgador.</p>
+        )}
+      </ModalInfo>
+
+      <ModalInfo
+        aberto={modal === "candidatura"}
+        titulo="Candidatura externa"
+        botaoLabel="Acessar link"
+        onFechar={fecharModal}
+        onBotao={acessarLink}
+      >
+        <p>
+          A candidatura para esta oportunidade acontece fora da plataforma
+          OportUna.
+        </p>
+        <p>Você será direcionado ao processo de inscrição da empresa.</p>
+      </ModalInfo>
+
       <div className={styles.container}>
         <div className={styles.topBar}>
           <button
@@ -119,6 +162,15 @@ export function OpportunityDetails() {
                 </header>
 
                 <section className={styles.section}>
+                  <h2>Renda</h2>
+                  <p className={styles.salary}>
+                    {formatarRenda(oportunidade.renda)}
+                    {oportunidade.renda !== null &&
+                      oportunidade.renda !== undefined && <span> / mês</span>}
+                  </p>
+                </section>
+
+                <section className={styles.section}>
                   <h2>Sobre a oportunidade</h2>
                   <p className={styles.description}>
                     {oportunidade.descricao}
@@ -148,30 +200,26 @@ export function OpportunityDetails() {
               </section>
 
               <aside className={styles.sidebar}>
-                <section className={styles.sideCard}>
-                  <h2>Candidate-se</h2>
+                {/* Só aparece quando a vaga tem link de candidatura */}
+                {candidaturaUrl && (
+                  <section className={styles.sideCard}>
+                    <h2>Candidate-se</h2>
 
-                  <p>
-                    A candidatura é realizada fora da plataforma, no canal
-                    indicado pelo divulgador.
-                  </p>
+                    <p>
+                      A candidatura é realizada fora da plataforma, no canal
+                      indicado pelo divulgador.
+                    </p>
 
-                  <a
-                    href={candidaturaUrl || undefined}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={`${styles.applyButton} ${
-                      !candidaturaUrl ? styles.disabledButton : ""
-                    }`}
-                    aria-disabled={!candidaturaUrl}
-                    onClick={(event) => {
-                      if (!candidaturaUrl) event.preventDefault();
-                    }}
-                  >
-                    Acessar página de candidatura
-                    <ExternalLink size={16} />
-                  </a>
-                </section>
+                    <button
+                      type="button"
+                      className={styles.applyButton}
+                      onClick={() => setModal("candidatura")}
+                    >
+                      Acessar página de candidatura
+                      <ExternalLink size={16} />
+                    </button>
+                  </section>
+                )}
 
                 <section className={styles.sideCard}>
                   <h2>Dúvidas sobre a vaga?</h2>
@@ -184,12 +232,7 @@ export function OpportunityDetails() {
                   <button
                     type="button"
                     className={styles.contactButton}
-                    disabled={!contato}
-                    onClick={() => {
-                      if (contato) {
-                        window.location.href = `mailto:${contato}`;
-                      }
-                    }}
+                    onClick={() => setModal("contato")}
                   >
                     Ver contato
                   </button>

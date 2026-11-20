@@ -1,14 +1,17 @@
 import { useEffect, useState } from "react";
 import type { ChangeEvent, FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
+import { Search } from "lucide-react";
 
 import { OpportunityCard } from "../../components/OpportunityCard/OpportunityCard";
-import { Input } from "../../components/Input/Input";
-import { Button } from "../../components/Button/Button";
 import { ApiError } from "../../services/api";
 import { sair } from "../../services/authService";
 import { listarOportunidades } from "../../services/oportunidadeService";
-import { modalidadeLabel, tipoLabel } from "../../types/oportunidade";
+import {
+  formatarRenda,
+  modalidadeLabel,
+  tipoLabel,
+} from "../../types/oportunidade";
 import type {
   Modalidade,
   Oportunidade,
@@ -128,7 +131,14 @@ export function Home() {
     setAppliedSearch(searchTerm.trim());
   }
 
+  // Clicar na sugestão já marcada desmarca e limpa a busca.
   function handleSuggestionClick(suggestion: string) {
+    if (appliedSearch === suggestion) {
+      setSearchTerm("");
+      setAppliedSearch("");
+      return;
+    }
+
     setSearchTerm(suggestion);
     setAppliedSearch(suggestion);
   }
@@ -162,47 +172,64 @@ export function Home() {
         </section>
 
         <section className={styles.searchContainer}>
-          <form className={styles.searchSection} onSubmit={handleSearch}>
-            <Input
-              id="search"
-              label="Pesquisar oportunidades"
-              placeholder="Digite palavras-chave"
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              className={styles.searchInput}
+          <form className={styles.searchBar} onSubmit={handleSearch}>
+            <Search
+              size={18}
+              strokeWidth={2.5}
+              className={styles.searchIcon}
+              aria-hidden="true"
             />
 
-            <Button
+            <input
+              id="search"
+              type="text"
+              className={styles.searchField}
+              placeholder="Pesquise por cargo, empresa ou palavra-chave"
+              aria-label="Pesquisar oportunidades"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+
+            <button
               type="submit"
-              variant="primary"
               className={styles.searchButton}
+              aria-label="Pesquisar"
             >
-              Pesquisar
-            </Button>
+              <Search size={22} strokeWidth={3} />
+            </button>
           </form>
 
-          <div className={styles.suggestions}>
-            <span className={styles.suggestionsLabel}>Sugestões:</span>
+          {/* Título e sugestões na mesma linha */}
+          <div className={styles.inlineRow}>
+            <h2 className={styles.blockTitle}>Sugestões de busca</h2>
 
             <div className={styles.suggestionList}>
-              {searchSuggestions.map((suggestion) => (
-                <button
-                  key={suggestion}
-                  type="button"
-                  className={`${styles.suggestion} ${
-                    appliedSearch === suggestion ? styles.suggestionActive : ""
-                  }`}
-                  onClick={() => handleSuggestionClick(suggestion)}
-                >
-                  {suggestion}
-                </button>
-              ))}
+              {searchSuggestions.map((suggestion) => {
+                const ativa = appliedSearch === suggestion;
+
+                return (
+                  <button
+                    key={suggestion}
+                    type="button"
+                    className={`${styles.suggestion} ${
+                      ativa ? styles.suggestionActive : ""
+                    }`}
+                    aria-pressed={ativa}
+                    onClick={() => handleSuggestionClick(suggestion)}
+                  >
+                    {suggestion}
+                  </button>
+                );
+              })}
             </div>
           </div>
 
+          {/* Filtros com o título ao lado do campo */}
           <div className={styles.filters}>
-            <div className={styles.filterField}>
-              <label htmlFor="filtro-tipo">Tipo</label>
+            <div className={styles.inlineRow}>
+              <label htmlFor="filtro-tipo" className={styles.blockTitle}>
+                Tipo
+              </label>
 
               <select
                 id="filtro-tipo"
@@ -219,8 +246,10 @@ export function Home() {
               </select>
             </div>
 
-            <div className={styles.filterField}>
-              <label htmlFor="filtro-modalidade">Modalidade</label>
+            <div className={styles.inlineRow}>
+              <label htmlFor="filtro-modalidade" className={styles.blockTitle}>
+                Modalidade
+              </label>
 
               <select
                 id="filtro-modalidade"
@@ -254,8 +283,9 @@ export function Home() {
             <h2>
               {appliedSearch
                 ? `Resultados para "${appliedSearch}"`
-                : "Oportunidades em destaque"}
+                : "Oportunidades"}
             </h2>
+            <p>Confira as publicações da comunidade.</p>
           </div>
 
           {carregando && (
@@ -275,6 +305,13 @@ export function Home() {
                     tipo={tipoLabel[opportunity.tipo]}
                     modalidade={modalidadeLabel[opportunity.modalidade]}
                     descricao={opportunity.descricao}
+                    renda={
+                      opportunity.renda !== null &&
+                      opportunity.renda !== undefined
+                        ? formatarRenda(opportunity.renda)
+                        : undefined
+                    }
+                    criadoEm={opportunity.criadoEm}
                     onVerDetalhes={() =>
                       navigate(`/oportunidade/${opportunity.id}`)
                     }
