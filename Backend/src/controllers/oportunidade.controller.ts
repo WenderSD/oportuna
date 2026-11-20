@@ -1,4 +1,3 @@
-
 import type { RequestHandler } from "express";
 import {
   criarOportunidadeSchema,
