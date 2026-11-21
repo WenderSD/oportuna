@@ -325,7 +325,8 @@ test("paginação desempata datas por id e não repete registros", async () => {
 });
 
 for (const query of [
-  "busca=tecnologia",
+  "texto=tecnologia",
+  "empresa=Exemplo",
   "tipo=INEXISTENTE",
   "modalidade=ONLINE",
   "limite=51",
