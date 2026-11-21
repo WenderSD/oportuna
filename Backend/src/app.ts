@@ -1,13 +1,13 @@
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
+import swaggerUi from "swagger-ui-express";
 import { z } from "zod";
+import { openApiDocument } from "./docs-api/openapi.js";
 import { prisma } from "./lib/prisma.js";
 import { tratarErros } from "./middlewares/tratarErros.js";
 import oportunidadeRouter from "./routes/oportunidade.routes.js";
 import usuarioRouter from "./routes/usuario.routes.js";
-import swaggerUi from "swagger-ui-express";
-import { openApiDocument } from "./docs-api/openapi.js";
 
 z.config(z.locales.pt());
 

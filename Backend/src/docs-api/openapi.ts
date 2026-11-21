@@ -1,10 +1,8 @@
-
 export const openApiDocument = {
   openapi: "3.0.3",
   info: {
     title: "OportUna API",
-    description:
-      "Documentação oficial da API da plataforma OportUna.",
+    description: "Documentação oficial da API da plataforma OportUna.",
     version: "1.0.0",
   },
   servers: [
@@ -218,9 +216,21 @@ export const openApiDocument = {
         summary: "Listar minhas oportunidades",
         security: [{ bearerAuth: [] }],
         parameters: [
-          { name: "tipo", in: "query", schema: { type: "string", enum: ["EMPREGO", "ESTAGIO", "PESQUISA", "OUTRO"] } },
-          { name: "modalidade", in: "query", schema: { type: "string", enum: ["PRESENCIAL", "HIBRIDO", "REMOTO"] } },
-          { name: "estado", in: "query", schema: { type: "string", enum: ["ATIVA", "EXPIRADA", "ENCERRADA"] } },
+          {
+            name: "tipo",
+            in: "query",
+            schema: { type: "string", enum: ["EMPREGO", "ESTAGIO", "PESQUISA", "OUTRO"] },
+          },
+          {
+            name: "modalidade",
+            in: "query",
+            schema: { type: "string", enum: ["PRESENCIAL", "HIBRIDO", "REMOTO"] },
+          },
+          {
+            name: "estado",
+            in: "query",
+            schema: { type: "string", enum: ["ATIVA", "EXPIRADA", "ENCERRADA"] },
+          },
           { name: "pagina", in: "query", schema: { type: "integer", default: 1 } },
           { name: "limite", in: "query", schema: { type: "integer", default: 10, maximum: 50 } },
         ],
@@ -237,8 +247,16 @@ export const openApiDocument = {
         summary: "Listar oportunidades",
         security: [{ bearerAuth: [] }],
         parameters: [
-          { name: "tipo", in: "query", schema: { type: "string", enum: ["EMPREGO", "ESTAGIO", "PESQUISA", "OUTRO"] } },
-          { name: "modalidade", in: "query", schema: { type: "string", enum: ["PRESENCIAL", "HIBRIDO", "REMOTO"] } },
+          {
+            name: "tipo",
+            in: "query",
+            schema: { type: "string", enum: ["EMPREGO", "ESTAGIO", "PESQUISA", "OUTRO"] },
+          },
+          {
+            name: "modalidade",
+            in: "query",
+            schema: { type: "string", enum: ["PRESENCIAL", "HIBRIDO", "REMOTO"] },
+          },
           { name: "pagina", in: "query", schema: { type: "integer", default: 1 } },
           { name: "limite", in: "query", schema: { type: "integer", default: 10, maximum: 50 } },
         ],
@@ -305,7 +323,8 @@ export const openApiDocument = {
         tags: ["Oportunidades"],
         summary: "Editar oportunidade",
         security: [{ bearerAuth: [] }],
-        description: "Somente o autor pode editar a oportunidade. Todos os campos são opcionais, mas ao menos um deve ser enviado.",
+        description:
+          "Somente o autor pode editar a oportunidade. Todos os campos são opcionais, mas ao menos um deve ser enviado.",
         requestBody: {
           required: true,
           content: {
