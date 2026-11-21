@@ -1,7 +1,9 @@
 import "dotenv/config";
 import cors from "cors";
 import express from "express";
+import swaggerUi from "swagger-ui-express";
 import { z } from "zod";
+import { openApiDocument } from "./docs-api/openapi.js";
 import { prisma } from "./lib/prisma.js";
 import { tratarErros } from "./middlewares/tratarErros.js";
 import oportunidadeRouter from "./routes/oportunidade.routes.js";
@@ -13,6 +15,7 @@ export const app = express();
 
 app.use(cors({ origin: "http://localhost:5173" }));
 app.use(express.json());
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
 app.get("/api/health", (_req, res) => {
   res.json({ status: "ok", application: "OportUna API" });
