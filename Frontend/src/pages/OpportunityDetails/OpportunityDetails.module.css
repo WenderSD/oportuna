@@ -53,6 +53,19 @@
   color: var(--color-primary-hover);
 }
 
+/* Carregando e erro */
+
+.stateMessage {
+  margin: 40px 0 0;
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  text-align: center;
+}
+
+.error {
+  color: #e11d48;
+}
+
 /* Estrutura dos cartões */
 
 .contentGrid {
@@ -93,6 +106,7 @@
 
 .tags {
   display: flex;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 24px;
 }
@@ -106,6 +120,13 @@
 
   font-size: 12px;
   font-weight: 600;
+}
+
+/* Tag de vaga encerrada ou expirada */
+
+.tagClosed {
+  color: #5b6475;
+  background-color: #eceef2;
 }
 
 .section {
@@ -124,6 +145,26 @@
   color: var(--color-text-secondary);
   font-size: 15px;
   line-height: 1.8;
+}
+
+/* Renda */
+
+.section .salary {
+  color: var(--color-primary);
+  font-size: 22px;
+  font-weight: 700;
+}
+
+.salary span {
+  color: var(--color-text-secondary);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Mantém as quebras de linha da descrição */
+
+.description {
+  white-space: pre-line;
 }
 
 .requirements {
@@ -191,7 +232,7 @@
   transition: background-color 0.2s ease;
 }
 
-.applyButton:hover {
+.applyButton:hover:not(:disabled) {
   background-color: var(--color-primary-hover);
 }
 
@@ -209,6 +250,7 @@
   border-color: var(--color-primary);
 }
 
+.applyButton:disabled,
 .contactButton:disabled,
 .disabledButton {
   opacity: 0.55;
