@@ -14,10 +14,7 @@ const camposOportunidade = {
     .trim()
     .min(1)
     .max(100)
-    .refine(
-      (valor) => extrairRendaFormatada(valor) !== null,
-      "Informe um valor de renda válido.",
-    )
+    .refine((valor) => extrairRendaFormatada(valor) !== null, "Informe um valor de renda válido.")
     .nullable()
     .optional(),
   requisitos: z.array(z.string().trim().min(1).max(500)).max(30),
