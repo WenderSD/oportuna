@@ -1,6 +1,8 @@
 import { type Oportunidade, Prisma } from "../../generated/prisma/client.js";
+import { ModalidadeTrabalho, TipoOportunidade } from "../../generated/prisma/enums.js";
 import { AppError } from "../lib/AppError.js";
 import { prisma } from "../lib/prisma.js";
+import { extrairRendaFormatada, rendaParaTipo } from "../lib/renda.js";
 import type {
   CriarOportunidadeInput,
   EditarOportunidadeInput,
@@ -31,6 +33,36 @@ function filtroEstado(estado: string, agora: Date): Prisma.OportunidadeWhereInpu
     OR: [{ expiraEm: null }, { expiraEm: { gt: agora } }],
   };
 }
+// No LIKE do PostgreSQL, % e _ são curingas: aqui eles passam a valer como texto comum.
+const escaparCuringas = (texto: string) => texto.replace(/[\\%_]/g, "\\$&");
+
+const semAcento = (texto: string) => texto.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase();
+
+// Cada palavra digitada precisa aparecer em pelo menos um campo da oportunidade.
+function filtroPalavra(palavra: string): Prisma.OportunidadeWhereInput {
+  const minuscula = palavra.toLowerCase();
+  const capitalizada = minuscula.charAt(0).toUpperCase() + minuscula.slice(1);
+  const normal = semAcento(palavra);
+
+  const trecho = escaparCuringas(palavra);
+
+  const condicoes: Prisma.OportunidadeWhereInput[] = [
+    { titulo: { contains: trecho, mode: "insensitive" } },
+    { empresa: { contains: trecho, mode: "insensitive" } },
+    { descricao: { contains: trecho, mode: "insensitive" } },
+    { localizacao: { contains: trecho, mode: "insensitive" } },
+    { requisitos: { hasSome: [palavra, minuscula, capitalizada] } },
+  ];
+
+  // Os rótulos da tela (Estágio, Remoto, Híbrido...) também funcionam como palavra de busca.
+  const tipo = Object.values(TipoOportunidade).find((valor) => semAcento(valor) === normal);
+  if (tipo) condicoes.push({ tipo });
+
+  const modalidade = Object.values(ModalidadeTrabalho).find((valor) => semAcento(valor) === normal);
+  if (modalidade) condicoes.push({ modalidade });
+
+  return { OR: condicoes };
+}
 
 export class OportunidadeService {
   async criar(dados: CriarOportunidadeInput, autorId: string) {
@@ -39,17 +71,22 @@ export class OportunidadeService {
       throw new AppError("Usuário não encontrado. Faça login novamente.", 401);
     }
 
-    const oportunidade = await prisma.oportunidade.create({ data: { ...dados, autorId } });
+    const renda = dados.renda == null ? dados.renda : rendaParaTipo(dados.renda, dados.tipo);
+    const oportunidade = await prisma.oportunidade.create({
+      data: { ...dados, renda, autorId },
+    });
     return comEstado(oportunidade);
   }
 
   async listar(filtros: ListarOportunidadesInput, autorId?: string) {
     const agora = new Date();
+    const palavras = (filtros.busca ?? "").split(/\s+/).filter(Boolean).slice(0, 5);
     const where: Prisma.OportunidadeWhereInput = {
       tipo: filtros.tipo,
       modalidade: filtros.modalidade,
       ...(autorId ? { autorId } : {}),
       ...(!autorId || filtros.estado ? filtroEstado(filtros.estado ?? "ATIVA", agora) : {}),
+      ...(palavras.length > 0 ? { AND: palavras.map(filtroPalavra) } : {}),
     };
 
     const [oportunidades, total] = await prisma.$transaction(
@@ -95,10 +132,24 @@ export class OportunidadeService {
   }
 
   async editar(id: string, autorId: string, dados: EditarOportunidadeInput) {
-    await this.buscarDoAutor(id, autorId);
+    const oportunidadeAtual = await this.buscarDoAutor(id, autorId);
+    const dadosAtualizados: EditarOportunidadeInput = { ...dados };
+
+    if (dados.renda !== undefined) {
+      dadosAtualizados.renda =
+        dados.renda === null
+          ? null
+          : rendaParaTipo(dados.renda, dados.tipo ?? oportunidadeAtual.tipo);
+    } else if (dados.tipo !== undefined && oportunidadeAtual.renda) {
+      const rendaFormatada = extrairRendaFormatada(oportunidadeAtual.renda);
+      if (rendaFormatada) {
+        dadosAtualizados.renda = rendaParaTipo(rendaFormatada, dados.tipo);
+      }
+    }
+
     const resultado = await prisma.oportunidade.updateMany({
       where: { id, autorId, encerradaEm: null },
-      data: dados,
+      data: dadosAtualizados,
     });
 
     if (resultado.count === 0) {

@@ -1,4 +1,3 @@
-
 .page {
   width: 100%;
   min-height: 100%;
@@ -105,6 +104,30 @@
   color: var(--color-text-secondary);
 }
 
+/* Campos lado a lado */
+.row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+
+/* Campo com metade da largura (mesmo tamanho de uma coluna da .row) */
+.halfField {
+  width: calc(50% - 12px);
+}
+
+.hint {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: 13px;
+}
+
+.error {
+  margin: 0;
+  color: #e11d48;
+  font-size: 14px;
+}
+
 /* Ações */
 .actions {
   display: flex;
@@ -169,6 +192,14 @@
 @media (max-width: 760px) {
   .content {
     grid-template-columns: 1fr;
+  }
+
+  .row {
+    grid-template-columns: 1fr;
+  }
+
+  .halfField {
+    width: 100%;
   }
 
   .tipCard {

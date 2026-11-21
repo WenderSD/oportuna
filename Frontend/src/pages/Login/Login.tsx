@@ -1,8 +1,9 @@
-
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import { Input } from "../../components/Input/Input";
 import { Button } from "../../components/Button/Button";
+import { login } from "../../services/authService";
 
 import logoLogin from "../../assets/images/logo-oportuna-login.png";
 import backgroundLogin from "../../assets/images/background-login.png";
@@ -10,10 +11,29 @@ import backgroundLogin from "../../assets/images/background-login.png";
 import styles from "./Login.module.css";
 
 export function Login() {
-  function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
+  const navigate = useNavigate();
+  const [erro, setErro] = useState<string | null>(null);
+  const [enviando, setEnviando] = useState(false);
+
+  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
-    // A autenticação será conectada ao backend posteriormente.
+    const form = event.currentTarget;
+    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
+    const senha = (form.elements.namedItem("password") as HTMLInputElement)
+      .value;
+
+    setErro(null);
+    setEnviando(true);
+
+    try {
+      await login(email, senha);
+      navigate("/home");
+    } catch (e) {
+      setErro(e instanceof Error ? e.message : "Não foi possível entrar.");
+    } finally {
+      setEnviando(false);
+    }
   }
 
   return (
@@ -82,11 +102,18 @@ export function Login() {
               </button>
             </div>
 
+            {erro && (
+              <p className={styles.error} role="alert">
+                {erro}
+              </p>
+            )}
+
             <Button
               type="submit"
               className={styles.submitButton}
+              disabled={enviando}
             >
-              Entrar
+              {enviando ? "Entrando..." : "Entrar"}
             </Button>
           </form>
 

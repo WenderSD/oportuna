@@ -37,6 +37,7 @@ async function main() {
       modalidade: "REMOTO",
       requisitos: ["Cursando graduação"],
       linkCandidatura: "https://example.com/estagio",
+      renda: "Bolsa-auxílio de R$ 1.200,00",
     },
     {
       id: "00000000-0000-4000-8000-000000000102",

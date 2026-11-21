@@ -50,4 +50,6 @@ executar([
   "tests/ambiente.test.ts",
   "tests/autenticacao.test.ts",
   "tests/oportunidades.test.ts",
+  "tests/oportunidades-renda.test.ts",
+  "tests/oportunidades-busca.test.ts",
 ]);

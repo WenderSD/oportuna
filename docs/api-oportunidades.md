@@ -48,9 +48,11 @@ Exemplo de corpo para publicação:
 | titulo | Sim | Texto sem espaços nas extremidades, 3 a 150 caracteres |
 | empresa | Sim | Texto sem espaços nas extremidades, 2 a 150 caracteres |
 | descricao | Sim | Texto sem espaços nas extremidades, 10 a 10000 caracteres |
+|"renda": "Bolsa-auxílio de R$ 1.200,00"|
 | tipo | Sim | EMPREGO, ESTAGIO, PESQUISA ou OUTRO |
 | modalidade | Sim | PRESENCIAL, HIBRIDO ou REMOTO |
 | localizacao | Não | Texto de 2 a 150 caracteres ou null |
+| renda | Não | Texto livre de 2 a 100 caracteres, como "R$ 1.500,00", "Bolsa-auxílio de R$ 1.200,00" ou "A combinar"; ou null |
 | requisitos | Não | Até 30 textos de 1 a 500 caracteres cada; padrão [] |
 | linkCandidatura | Não | URL absoluta HTTP/HTTPS de até 2048 caracteres ou null |
 | emailContato | Não | Email válido de até 254 caracteres ou null; salvo em minúsculas |
@@ -99,7 +101,7 @@ As operações de escrita incluem também `mensagem`. Não há dados de cadastro
 
 ## Filtros e paginação
 
-`GET /api/oportunidades?tipo=ESTAGIO&modalidade=REMOTO&pagina=1&limite=10`
+`GET /api/oportunidades?busca=desenvolvimento&tipo=ESTAGIO&modalidade=REMOTO&pagina=1&limite=10`
 
 - tipo e modalidade são opcionais; quando combinados, ambos precisam ser atendidos.
 - pagina é um inteiro entre 1 e 10000; padrão 1.

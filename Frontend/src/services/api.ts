@@ -28,7 +28,7 @@ export async function api<T>(
     let message = "Não foi possível comunicar com o servidor.";
     try {
       const data = await response.json();
-      message = data.message ?? data.erro ?? message;
+      message = data.mensagem ?? data.message ?? data.erro ?? message;
     } catch {
       // resposta sem corpo JSON
     }
@@ -37,9 +37,4 @@ export async function api<T>(
 
   if (response.status === 204) return undefined as T;
   return response.json() as Promise<T>;
-}
-
-// Rota que já funciona no backend. Útil para testar a conexão.
-export function verificarApi() {
-  return api<{ status: string; application: string }>("/api/health");
 }

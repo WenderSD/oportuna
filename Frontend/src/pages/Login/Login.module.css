@@ -216,3 +216,8 @@
     font-size: 13px;
   }
 }
+.error {
+  margin: 0;
+  color: #e11d48;
+  font-size: 14px;
+}

@@ -4,6 +4,7 @@
   --perfil-accent: #0fa8a0;
   --perfil-accent-soft: #dff3f1;
   --perfil-danger: #e11d48;
+  --perfil-danger-soft: #fdecef;
 
   background-color: var(--color-background);
 }
@@ -102,6 +103,33 @@
   color: var(--perfil-accent);
   font-size: 12px;
   font-weight: 600;
+}
+
+/* Botão de sair */
+.logoutButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-shrink: 0;
+  margin-left: auto;
+  padding: 10px 20px;
+  color: var(--perfil-danger);
+  background-color: transparent;
+  border: 1px solid var(--perfil-border);
+  border-radius: 12px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+.logoutButton:hover {
+  border-color: var(--perfil-danger);
+  background-color: var(--perfil-danger-soft);
 }
 
 /* Minhas oportunidades */
@@ -279,9 +307,18 @@
     font-size: 21px;
   }
 
+  .profileCard {
+    flex-wrap: wrap;
+  }
+
   .avatar {
     width: 64px;
     height: 64px;
     font-size: 28px;
+  }
+
+  .logoutButton {
+    width: 100%;
+    margin-left: 0;
   }
 }

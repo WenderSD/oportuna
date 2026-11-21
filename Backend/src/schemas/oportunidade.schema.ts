@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { ModalidadeTrabalho, TipoOportunidade } from "../../generated/prisma/enums.js";
+import { extrairRendaFormatada } from "../lib/renda.js";
 
 const camposOportunidade = {
   titulo: z.string().trim().min(3).max(150),
@@ -8,6 +9,17 @@ const camposOportunidade = {
   tipo: z.enum(TipoOportunidade),
   modalidade: z.enum(ModalidadeTrabalho),
   localizacao: z.string().trim().min(2).max(150).nullable().optional(),
+  renda: z
+    .string()
+    .trim()
+    .min(1)
+    .max(100)
+    .refine(
+      (valor) => extrairRendaFormatada(valor) !== null,
+      "Informe um valor de renda válido.",
+    )
+    .nullable()
+    .optional(),
   requisitos: z.array(z.string().trim().min(1).max(500)).max(30),
   linkCandidatura: z
     .url({ protocol: /^https?$/ })
@@ -48,6 +60,7 @@ const camposListagem = {
     .transform(Number)
     .pipe(z.number().int().max(50))
     .default(10),
+  busca: z.string().trim().max(100).optional(),
 };
 
 export const listarOportunidadesSchema = z.strictObject(camposListagem);
