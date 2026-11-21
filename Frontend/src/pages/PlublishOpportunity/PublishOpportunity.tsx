@@ -134,7 +134,7 @@ export function PublishOpportunity() {
         .filter(Boolean),
       linkCandidatura: link,
       emailContato: valor(form, "emailContato"),
-      renda,
+      renda: renda ?? undefined,
       expiraEm: prazo
         ? new Date(`${prazo}T23:59:59`).toISOString()
         : undefined,
