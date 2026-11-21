@@ -53,10 +53,14 @@ export function PublishOpportunity() {
   const editando = Boolean(id);
 
   const [inicial, setInicial] = useState<Oportunidade | null>(null);
+  const [descricao, setDescricao] = useState("");
+  const [descricaoInteragida, setDescricaoInteragida] = useState(false);
   const [carregando, setCarregando] = useState(editando);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState<string | null>(null);
   const [publicada, setPublicada] = useState(false);
+  const descricaoInvalida =
+    (descricaoInteragida || descricao.length > 0) && descricao.trim().length < 10;
 
   // Modo edição: carrega a vaga para preencher o formulário.
   useEffect(() => {
@@ -65,7 +69,10 @@ export function PublishOpportunity() {
 
     buscarOportunidade(id)
       .then((oportunidade) => {
-        if (ativo) setInicial(oportunidade);
+        if (ativo) {
+          setInicial(oportunidade);
+          setDescricao(oportunidade.descricao);
+        }
       })
       .catch((e: unknown) => {
         if (!ativo) return;
@@ -91,6 +98,12 @@ export function PublishOpportunity() {
     event.preventDefault();
 
     const form = event.currentTarget;
+    const descricaoInformada = valor(form, "descricao");
+    if (descricaoInformada.length < 10) {
+      setDescricaoInteragida(true);
+      return;
+    }
+
     const prazo = valor(form, "expiraEm");
     const rendaTexto = valor(form, "renda");
     const tipo = valor(form, "tipo") as TipoOportunidade;
@@ -113,7 +126,7 @@ export function PublishOpportunity() {
       empresa: valor(form, "empresa"),
       tipo,
       modalidade: valor(form, "modalidade") as Modalidade,
-      descricao: valor(form, "descricao"),
+      descricao: descricaoInformada,
       localizacao: valor(form, "localizacao"),
       requisitos: valor(form, "requisitos")
         .split("\n")
@@ -288,9 +301,18 @@ export function PublishOpportunity() {
                     name="descricao"
                     className={styles.textarea}
                     placeholder="Descreva atividades e informações importantes"
-                    defaultValue={inicial?.descricao ?? ""}
+                    value={descricao}
+                    onChange={(event) => setDescricao(event.target.value)}
+                    onBlur={() => setDescricaoInteragida(true)}
+                    aria-invalid={descricaoInvalida}
+                    aria-describedby={descricaoInvalida ? "descricao-ajuda" : undefined}
                     required
                   />
+                  {descricaoInvalida && (
+                    <span id="descricao-ajuda" className={styles.error}>
+                      A descrição precisa ter pelo menos 10 caracteres.
+                    </span>
+                  )}
                 </div>
 
                 <div className={styles.field}>
