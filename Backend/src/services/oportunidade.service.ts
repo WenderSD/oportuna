@@ -2,6 +2,7 @@ import { type Oportunidade, Prisma } from "../../generated/prisma/client.js";
 import { ModalidadeTrabalho, TipoOportunidade } from "../../generated/prisma/enums.js";
 import { AppError } from "../lib/AppError.js";
 import { prisma } from "../lib/prisma.js";
+import { extrairRendaFormatada, rendaParaTipo } from "../lib/renda.js";
 import type {
   CriarOportunidadeInput,
   EditarOportunidadeInput,
@@ -70,7 +71,10 @@ export class OportunidadeService {
       throw new AppError("Usuário não encontrado. Faça login novamente.", 401);
     }
 
-    const oportunidade = await prisma.oportunidade.create({ data: { ...dados, autorId } });
+    const renda = dados.renda == null ? dados.renda : rendaParaTipo(dados.renda, dados.tipo);
+    const oportunidade = await prisma.oportunidade.create({
+      data: { ...dados, renda, autorId },
+    });
     return comEstado(oportunidade);
   }
 
@@ -128,10 +132,24 @@ export class OportunidadeService {
   }
 
   async editar(id: string, autorId: string, dados: EditarOportunidadeInput) {
-    await this.buscarDoAutor(id, autorId);
+    const oportunidadeAtual = await this.buscarDoAutor(id, autorId);
+    const dadosAtualizados: EditarOportunidadeInput = { ...dados };
+
+    if (dados.renda !== undefined) {
+      dadosAtualizados.renda =
+        dados.renda === null
+          ? null
+          : rendaParaTipo(dados.renda, dados.tipo ?? oportunidadeAtual.tipo);
+    } else if (dados.tipo !== undefined && oportunidadeAtual.renda) {
+      const rendaFormatada = extrairRendaFormatada(oportunidadeAtual.renda);
+      if (rendaFormatada) {
+        dadosAtualizados.renda = rendaParaTipo(rendaFormatada, dados.tipo);
+      }
+    }
+
     const resultado = await prisma.oportunidade.updateMany({
       where: { id, autorId, encerradaEm: null },
-      data: dados,
+      data: dadosAtualizados,
     });
 
     if (resultado.count === 0) {

@@ -6,6 +6,7 @@ import { Button } from "../../components/Button/Button";
 import { ModalInfo } from "../../components/ModalInfo/ModalInfo";
 import { ApiError } from "../../services/api";
 import { sair } from "../../services/authService";
+import { normalizarRenda } from "../../utils/renda";
 import {
   buscarOportunidade,
   criarOportunidade,
@@ -92,7 +93,14 @@ export function PublishOpportunity() {
     const form = event.currentTarget;
     const prazo = valor(form, "expiraEm");
     const rendaTexto = valor(form, "renda");
+    const tipo = valor(form, "tipo") as TipoOportunidade;
+    const renda = rendaTexto ? normalizarRenda(rendaTexto, tipo) : undefined;
     const link = valor(form, "linkCandidatura");
+
+    if (rendaTexto && !renda) {
+      setErro("Informe um valor de renda válido, como R$ 2.000,00.");
+      return;
+    }
 
     // Garante o link mesmo se alguém burlar o "required" do navegador.
     if (!link) {
@@ -103,7 +111,7 @@ export function PublishOpportunity() {
     const dados: DadosOportunidade = {
       titulo: valor(form, "titulo"),
       empresa: valor(form, "empresa"),
-      tipo: valor(form, "tipo") as TipoOportunidade,
+      tipo,
       modalidade: valor(form, "modalidade") as Modalidade,
       descricao: valor(form, "descricao"),
       localizacao: valor(form, "localizacao"),
@@ -113,7 +121,7 @@ export function PublishOpportunity() {
         .filter(Boolean),
       linkCandidatura: link,
       emailContato: valor(form, "emailContato"),
-      renda: rendaTexto ? Number(rendaTexto) : undefined,
+      renda,
       expiraEm: prazo
         ? new Date(`${prazo}T23:59:59`).toISOString()
         : undefined,
@@ -255,12 +263,20 @@ export function PublishOpportunity() {
                   <Input
                     id="renda"
                     name="renda"
-                    label="Renda mensal em R$ (opcional)"
-                    type="number"
-                    min="0"
-                    step="0.01"
-                    placeholder="Ex.: 1500"
+                    label="Renda (opcional)"
+                    type="text"
+                    placeholder="Ex.: R$ 1.500,00 ou A combinar"
                     defaultValue={inicial?.renda ?? ""}
+                    onBlur={(event) => {
+                      const tipoInput = event.currentTarget.form?.elements.namedItem(
+                        "tipo",
+                      ) as HTMLSelectElement | null;
+                      const renda = normalizarRenda(
+                        event.currentTarget.value,
+                        tipoInput?.value as TipoOportunidade,
+                      );
+                      if (renda) event.currentTarget.value = renda;
+                    }}
                   />
                 </div>
 

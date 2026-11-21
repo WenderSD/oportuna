@@ -92,15 +92,15 @@ after(async () => {
 test("renda é salva e aparece nos detalhes e nos cards da listagem", async () => {
   const criada = await publicar({ renda: "Bolsa-auxílio de R$ 1.200,00" });
   assert.equal(criada.status, 201);
-  assert.equal(criada.body.oportunidade?.renda, "Bolsa-auxílio de R$ 1.200,00");
+  assert.equal(criada.body.oportunidade?.renda, "Bolsa-auxílio de R$1.200,00");
   const id = criada.body.oportunidade?.id;
 
   const detalhes = await requisicao(`/api/oportunidades/${id}`);
-  assert.equal(detalhes.body.oportunidade?.renda, "Bolsa-auxílio de R$ 1.200,00");
+  assert.equal(detalhes.body.oportunidade?.renda, "Bolsa-auxílio de R$1.200,00");
 
   const minhas = await requisicao("/api/usuarios/me/oportunidades?limite=50");
   const card = minhas.body.oportunidades?.find((item) => item.id === id);
-  assert.equal(card?.renda, "Bolsa-auxílio de R$ 1.200,00");
+  assert.equal(card?.renda, "Bolsa-auxílio de R$1.200,00");
 });
 
 test("renda é opcional e retorna null quando omitida", async () => {
@@ -109,14 +109,21 @@ test("renda é opcional e retorna null quando omitida", async () => {
   assert.equal(criada.body.oportunidade?.renda, null);
 });
 
-test("renda aceita texto livre e rejeita valores curtos ou longos demais", async () => {
-  for (const renda of ["A combinar", "R$ 1.500,00", "Bolsa de R$ 800 + vale-transporte"]) {
+test("renda extrai e normaliza o valor monetário", async () => {
+  const casos = [
+    ["A combinar", "Bolsa-auxílio de A combinar"],
+    ["R$ 1.500,00 por mês", "Bolsa-auxílio de R$1.500,00"],
+    ["Bolsa de R$ 800 + vale-transporte", "Bolsa-auxílio de R$800,00"],
+    ["salário USD 2,000.00 mensais", "Bolsa-auxílio de R$2.000,00"],
+  ];
+
+  for (const [renda, esperada] of casos) {
     const valida = await publicar({ renda });
     assert.equal(valida.status, 201, `deveria aceitar ${renda}`);
-    assert.equal(valida.body.oportunidade?.renda, renda);
+    assert.equal(valida.body.oportunidade?.renda, esperada);
   }
 
-  for (const renda of ["a", "x".repeat(101), ""]) {
+  for (const renda of ["sem valor numérico", "x".repeat(101), ""]) {
     const invalida = await publicar({ renda });
     assert.equal(invalida.status, 400);
     assert.equal(invalida.body.erros?.[0]?.campo, "renda");
@@ -129,7 +136,7 @@ test("autor altera e remove a renda na edição", async () => {
 
   const alterada = await requisicao(`/api/oportunidades/${id}`, "PATCH", { renda: "R$ 2.000,00" });
   assert.equal(alterada.status, 200);
-  assert.equal(alterada.body.oportunidade?.renda, "R$ 2.000,00");
+  assert.equal(alterada.body.oportunidade?.renda, "Bolsa-auxílio de R$2.000,00");
 
   const removida = await requisicao(`/api/oportunidades/${id}`, "PATCH", { renda: null });
   assert.equal(removida.status, 200);

@@ -165,8 +165,6 @@ export function OpportunityDetails() {
                   <h2>Renda</h2>
                   <p className={styles.salary}>
                     {formatarRenda(oportunidade.renda)}
-                    {oportunidade.renda !== null &&
-                      oportunidade.renda !== undefined && <span> / mês</span>}
                   </p>
                 </section>
 
