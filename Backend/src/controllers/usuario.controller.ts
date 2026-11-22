@@ -1,5 +1,6 @@
 import type { RequestHandler } from "express";
 import { UsuarioService } from "../services/usuario.service.js";
+import type {} from "../types/express.js";
 
 const usuarioService = new UsuarioService();
 

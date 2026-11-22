@@ -8,6 +8,7 @@ import {
   oportunidadeIdSchema,
 } from "../schemas/oportunidade.schema.js";
 import { OportunidadeService } from "../services/oportunidade.service.js";
+import type {} from "../types/express.js";
 
 const oportunidadeService = new OportunidadeService();
 

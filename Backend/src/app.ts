@@ -13,7 +13,12 @@ z.config(z.locales.pt());
 
 export const app = express();
 
-app.use(cors({ origin: "http://localhost:5173" }));
+const corsOrigins = (process.env.CORS_ORIGINS ?? "http://localhost:5173")
+  .split(",")
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+
+app.use(cors({ origin: corsOrigins }));
 app.use(express.json());
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiDocument));
 
@@ -39,3 +44,5 @@ app.use((_req, res) => {
 });
 
 app.use(tratarErros);
+
+export default app;
