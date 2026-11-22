@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import type {} from "../types/express.js";
 import {
   criarOportunidadeSchema,
   editarOportunidadeSchema,

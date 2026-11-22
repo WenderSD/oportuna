@@ -1,4 +1,7 @@
-const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const API_URL = (
+  import.meta.env.VITE_API_URL ??
+  (import.meta.env.DEV ? "http://localhost:3000" : "")
+).replace(/\/$/, "");
 
 export class ApiError extends Error {
   status: number;
@@ -13,6 +16,10 @@ export async function api<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
+  if (!API_URL) {
+    throw new ApiError("A URL do backend não está configurada (VITE_API_URL).", 0);
+  }
+
   const token = localStorage.getItem("token");
 
   const response = await fetch(`${API_URL}${path}`, {

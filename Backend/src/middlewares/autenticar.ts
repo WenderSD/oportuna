@@ -1,4 +1,5 @@
 import type { RequestHandler } from "express";
+import type {} from "../types/express.js";
 import { AppError } from "../lib/AppError.js";
 import { verificarToken } from "../lib/jwt.js";
 

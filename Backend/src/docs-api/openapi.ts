@@ -7,8 +7,8 @@ export const openApiDocument = {
   },
   servers: [
     {
-      url: "http://localhost:3000",
-      description: "Servidor local",
+      url: "/",
+      description: "Servidor atual",
     },
   ],
   tags: [

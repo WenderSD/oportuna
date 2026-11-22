@@ -200,6 +200,29 @@ npm install
 npm run dev
 ```
 
+Para desenvolvimento local, copie `Frontend/.env.example` para `Frontend/.env.local`.
+Ao publicar o frontend na Vercel, defina `VITE_API_URL` como a URL publica do backend.
+
+## Publicacao do Backend na Vercel
+
+Crie um projeto Vercel para esta aplicacao usando `Backend` como **Root Directory** e
+`npm run build` como **Build Command**. O Express e detectado pelo arquivo `src/app.ts`.
+
+Configure estas variaveis no projeto do backend:
+
+- `DATABASE_URL`: URL pooled do Neon para as requisicoes da API.
+- `JWT_SECRET`: chave secreta forte para assinar tokens.
+- `JWT_EXPIRES_IN`: validade do token, por exemplo `1d`.
+- `CORS_ORIGINS`: origem exata do frontend publicado, por exemplo `https://seu-frontend.vercel.app`.
+
+Antes do primeiro deploy, aplique as migrations usando a URL direct do Neon:
+rode `npm run db:migrate` dentro de `Backend`, definindo `DATABASE_URL` temporariamente
+para essa URL. Configure a URL pooled novamente no projeto Vercel como `DATABASE_URL`.
+
+No projeto Vercel do frontend, use `Frontend` como **Root Directory** e configure
+`VITE_API_URL` com a URL publica do projeto Vercel do backend. Como o Vite incorpora
+essa variavel no build, publique novamente o frontend depois de altera-la.
+
 ## Status do desenvolvimento
 
 Projeto em desenvolvimento.
