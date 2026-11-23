@@ -184,7 +184,7 @@ export function Home() {
               id="search"
               type="text"
               className={styles.searchField}
-              placeholder="Pesquise por cargo, empresa ou palavra-chave"
+              placeholder="Pesquise por palavra-chave"
               aria-label="Pesquisar oportunidades"
               value={searchTerm}
               onChange={(event) => setSearchTerm(event.target.value)}
