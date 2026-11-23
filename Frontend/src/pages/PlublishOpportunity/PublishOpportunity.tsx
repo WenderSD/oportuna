@@ -111,7 +111,7 @@ export function PublishOpportunity() {
     const link = valor(form, "linkCandidatura");
 
     if (rendaTexto && !renda) {
-      setErro("Informe um valor de renda válido, como R$ 2.000,00.");
+      setErro("Informe um valor de salário válido, como R$ 2.000,00.");
       return;
     }
 
@@ -276,7 +276,7 @@ export function PublishOpportunity() {
                   <Input
                     id="renda"
                     name="renda"
-                    label="Renda (opcional)"
+                    label="Salário (opcional)"
                     type="text"
                     placeholder="Ex.: R$ 1.500,00 ou A combinar"
                     defaultValue={inicial?.renda ?? ""}

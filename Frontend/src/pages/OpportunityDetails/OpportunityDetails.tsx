@@ -162,7 +162,7 @@ export function OpportunityDetails() {
                 </header>
 
                 <section className={styles.section}>
-                  <h2>Renda</h2>
+                  <h2>Salário</h2>
                   <p className={styles.salary}>
                     {formatarRenda(oportunidade.renda)}
                   </p>
