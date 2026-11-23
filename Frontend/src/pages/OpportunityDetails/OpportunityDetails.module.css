@@ -205,6 +205,10 @@
   line-height: 1.6;
 }
 
+.applicationNotice {
+  text-align: justify;
+}
+
 /* Botões laterais */
 
 .applyButton,

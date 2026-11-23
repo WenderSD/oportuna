@@ -203,7 +203,7 @@ export function OpportunityDetails() {
                   <section className={styles.sideCard}>
                     <h2>Candidate-se</h2>
 
-                    <p>
+                    <p className={styles.applicationNotice}>
                       A candidatura é realizada fora da plataforma, no canal
                       indicado pelo divulgador.
                     </p>

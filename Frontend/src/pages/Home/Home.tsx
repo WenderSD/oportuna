@@ -201,7 +201,7 @@ export function Home() {
 
           {/* Título e sugestões na mesma linha */}
           <div className={styles.inlineRow}>
-            <h2 className={styles.blockTitle}>Sugestões de busca</h2>
+            <h2 className={styles.blockTitle}>Categorias de busca</h2>
 
             <div className={styles.suggestionList}>
               {searchSuggestions.map((suggestion) => {
