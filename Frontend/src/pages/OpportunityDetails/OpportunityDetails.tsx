@@ -162,7 +162,7 @@ export function OpportunityDetails() {
                 </header>
 
                 <section className={styles.section}>
-                  <h2>Renda</h2>
+                  <h2>Salário</h2>
                   <p className={styles.salary}>
                     {formatarRenda(oportunidade.renda)}
                   </p>
@@ -203,7 +203,7 @@ export function OpportunityDetails() {
                   <section className={styles.sideCard}>
                     <h2>Candidate-se</h2>
 
-                    <p>
+                    <p className={styles.applicationNotice}>
                       A candidatura é realizada fora da plataforma, no canal
                       indicado pelo divulgador.
                     </p>

@@ -147,7 +147,7 @@
   line-height: 1.8;
 }
 
-/* Renda */
+/* Salário */
 
 .section .salary {
   color: var(--color-primary);
@@ -203,6 +203,10 @@
   color: var(--color-text-secondary);
   font-size: 14px;
   line-height: 1.6;
+}
+
+.applicationNotice {
+  text-align: justify;
 }
 
 /* Botões laterais */
